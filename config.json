@@ -1,0 +1,11 @@
+{
+    "page_title": "Change Me on config.json",
+    "meta_description": "Change Me on config.json.",
+    "navbar": {
+        "Accueil": "index.php",
+        "Page 1": "/page1",
+        "Page 2": "/page2",
+        "Contact": "index.php?page=contact"
+    },
+    "footer_text": "2024 My CMS. Tous droits réservés."
+}

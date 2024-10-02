@@ -1,0 +1,9 @@
+# Activer le moteur de réécriture
+RewriteEngine On
+
+# Cette règle ignore les fichiers et répertoires existants
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirige tout ce qui n'est pas un fichier ou un répertoire vers index.php
+RewriteRule ^(.*)$ index.php?page=$1 [L,QSA]
