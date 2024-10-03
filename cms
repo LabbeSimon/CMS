@@ -1,4 +1,31 @@
-# CMS
-/index.php # main board
-/register.php # register part
-/ check next update 
+.
+├── admin
+│   ├── index.php # main of admin panel
+│   ├── pages.php # main of page gestion
+│   └── # other part is comming soon
+│ 
+├── includes
+│   └── 
+├── pages
+│   └── 
+├── plugins
+│   └── / #empty you can add manualy plugin here or on admin pane
+│
+├── .htaccess  # rewrite on apache 2 or ngnix
+│  
+├── 404.html # default 404 error page
+│ 
+├── 502.html # default 502 error page
+│ 
+├── config.json # every change you can made without code
+│   
+├── index.php # main (laod a lot of php)
+│   
+├── login.php # login part
+│   
+├── logout.php # logout part
+│   
+├── register.php # register part
+│   
+└── users.json # data of user
+    
