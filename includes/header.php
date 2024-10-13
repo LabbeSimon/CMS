@@ -15,7 +15,7 @@ if (file_exists($configPath)) {
 $pageTitle = isset($config['page_title']) ? $config['page_title'] : 'Change me in config.json';
 $metaDescription = isset($config['meta_description']) ? $config['meta_description'] : 'Change this description directly on config.json.';
 
-
+// every part like page 2 write here it's the default config change that is config.json
 $navbarItems = isset($config['navbar']) ? $config['navbar'] : [
     'Accueil' => 'index.php',
     'Page 1' => 'index.php?page=page1',
