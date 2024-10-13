@@ -3,4 +3,9 @@
 * {
   font-family: "Montserrat", sans-serif;
 }
+
+ul {
+  color: white;
+  background-color: #add8e6;
+}
 /* adding more css in few time */
