@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Vérification des informations d'identification
+    // load depuis un fichier json peut être modifié pour être laod depuis un database
     if (file_exists($users_file)) {
         $users = json_decode(file_get_contents($users_file), true);
         foreach ($users as $user) {
