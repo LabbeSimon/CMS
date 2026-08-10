@@ -1,9 +1,123 @@
-# Activer le moteur de réécriture
+# ============================================================
+#  CMS - Configuration Apache (mod_rewrite + durcissement)
+#  Ce fichier suppose Apache 2.2 ou 2.4 avec AllowOverride All.
+#  NOTE : nginx n'utilise PAS .htaccess, il faut traduire ces
+#  regles dans le bloc server{} (voir README).
+# ============================================================
+
+# ------------------------------------------------------------
+# 1. Reglages generaux
+# ------------------------------------------------------------
+
+# Page servie par defaut pour un repertoire
+DirectoryIndex index.php index.html
+
+# Encodage par defaut des reponses
+AddDefaultCharset UTF-8
+
+# Interdit le listing du contenu des repertoires (/pages/, /plugins/...)
+Options -Indexes
+
+# Pas d'execution de CGI ni de liens symboliques suivis aveuglement
+Options -ExecCGI -Includes
+Options +FollowSymLinks
+
+# ------------------------------------------------------------
+# 2. Pages d'erreur du CMS
+#    Adapter le chemin si le CMS est installe dans un
+#    sous-repertoire (ex: /moncms/404.html)
+# ------------------------------------------------------------
+ErrorDocument 403 /404.html
+ErrorDocument 404 /404.html
+ErrorDocument 500 /502.html
+ErrorDocument 502 /502.html
+ErrorDocument 503 /502.html
+
+# ------------------------------------------------------------
+# 3. Protection des fichiers sensibles
+#    users.json contient les hashs des mots de passe : sans
+#    cette regle il est telechargeable publiquement.
+# ------------------------------------------------------------
+<FilesMatch "\.(json|md|log|sql|ini|yml|yaml|bak|old|swp|dist|example)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Fichiers caches et sauvegardes d'editeur (.git, .env, fichier~)
+<FilesMatch "^\.|~$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Le fichier d'arborescence "cms" (sans extension) a la racine
+<Files "cms">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</Files>
+
+# ------------------------------------------------------------
+# 4. Reecriture d'URL
+# ------------------------------------------------------------
+<IfModule mod_rewrite.c>
 RewriteEngine On
 
-# Cette règle ignore les fichiers et répertoires existants
+# Si le CMS est installe dans un sous-repertoire, decommenter et
+# adapter la ligne suivante :
+# RewriteBase /
+
+# --- Repertoires interdits en acces direct HTTP ---------------
+# includes/ : librairies internes, jamais appelees directement
+RewriteRule ^includes/ - [F,L]
+
+# .git/ : expose tout l'historique et le code source
+RewriteRule ^\.git/ - [F,L]
+
+# plugins/ : les fichiers sans extension ne sont pas interpretes par
+# PHP et seraient servis en texte brut (fuite du code source).
+RewriteRule ^plugins/[^/.]+$ - [F,L]
+
+# --- Routage principal ---------------------------------------
+# Tout ce qui n'est pas un fichier ou un repertoire existant
+# est envoye vers index.php sous la forme ?page=...
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-
-# Redirige tout ce qui n'est pas un fichier ou un répertoire vers index.php
 RewriteRule ^(.*)$ index.php?page=$1 [L,QSA]
+</IfModule>
+
+# ------------------------------------------------------------
+# 5. En-tetes de securite
+# ------------------------------------------------------------
+<IfModule mod_headers.c>
+    # Empeche le navigateur de "deviner" le type MIME
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Bloque l'affichage du site dans une iframe tierce (clickjacking)
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Limite les informations de provenance envoyees aux sites externes
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Desactive des APIs navigateur inutiles pour un CMS
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+    # Cookies de session : non lisibles en JS, non envoyes en cross-site
+    Header always edit Set-Cookie ^(.*)$ "$1; HttpOnly; SameSite=Lax"
+
+    # A activer uniquement une fois le site 100% en HTTPS :
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
