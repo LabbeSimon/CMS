@@ -1,0 +1,149 @@
+/* Theme « Association de protection » */
+
+:root {
+    --papier:      #fbf9f3;   /* creme */
+    --encre:       #23301f;
+    --encre-douce: #5d6b57;
+    --filet:       #d5d0c0;
+    --accent:      #1f5c3a;   /* vert foret */
+    --second:      #c4633a;   /* terre cuite */
+    --selection:   #d8e8d2;
+    --panneau:     #f2efe4;
+    --barre-fond:  #fbf9f3;
+    --barre-encre: #23301f;
+
+    --pile: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+}
+
+body { line-height: 1.6; }
+
+h1, h2, h3 { letter-spacing: -0.015em; line-height: 1.1; }
+
+h1 {
+    font-size: clamp(2.25rem, 1.5rem + 3.2vw, 4rem);
+    color: var(--accent);
+}
+
+/* Feuille stylisee devant les titres de section, dessinee en CSS */
+h2 {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+}
+
+h2::before {
+    content: "";
+    flex: none;
+    width: 0.5em;
+    height: 0.5em;
+    background: var(--second);
+    border-radius: 50% 0 50% 0;   /* seule courbe du theme : la feuille */
+}
+
+header { border-bottom: 2px solid var(--accent); }
+
+header a { text-transform: none; font-size: 0.9375rem; letter-spacing: 0.02em; }
+
+a:hover, a:focus-visible { color: var(--second); }
+
+ul { list-style: none; padding-left: 0; }
+
+main li { position: relative; padding-left: 1.25rem; }
+
+main li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 0.5em;
+    height: 0.5em;
+    background: var(--accent);
+    border-radius: 50% 0 50% 0;
+}
+
+/* Appels a l'action en terre cuite : adhesion, don, signalement */
+button,
+input[type="submit"],
+a.bouton {
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    background: var(--second);
+    border-color: var(--second);
+}
+
+button:hover,
+input[type="submit"]:hover,
+a.bouton:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+blockquote {
+    padding: var(--pas-2);
+    background: var(--panneau);
+    border-left: 4px solid var(--accent);
+}
+
+table th { color: var(--accent); }
+
+footer { border-top: 2px solid var(--accent); }
+
+/* Gabarit : bandeau nom + baseline, navigation sous filet */
+
+body { max-width: none; padding-left: 0; padding-right: 0; }
+
+.dedans {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+
+header { display: block; padding: 0; border-bottom: 2px solid var(--accent); }
+
+.entete-haut {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--pas-2) var(--pas-3);
+
+    padding-top: var(--pas-3);
+    padding-bottom: var(--pas-2);
+}
+
+.asso {
+    font-size: clamp(1.25rem, 1rem + 1.2vw, 1.875rem);
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.asso-baseline {
+    margin: 0;
+    color: var(--encre-douce);
+    font-size: 0.9375rem;
+    max-width: 28rem;
+}
+
+header nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pas-3);
+
+    margin: 0;
+    padding: var(--pas-2) 0;
+    list-style: none;
+
+    border-top: 1px solid var(--filet);
+}
+
+header nav li { margin: 0; padding-left: 0; max-width: none; }
+header nav li::before { content: none; }
+
+.nav-service { margin-left: auto; color: var(--encre-douce); }
+
+footer { margin-top: var(--pas-6); padding: var(--pas-3) 0; }
+
+.footer-nom { font-weight: 700; color: var(--accent); }

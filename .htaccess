@@ -38,7 +38,7 @@ ErrorDocument 503 /502.html
 #    users.json contient les hashs des mots de passe : sans
 #    cette regle il est telechargeable publiquement.
 # ------------------------------------------------------------
-<FilesMatch "\.(json|md|log|sql|ini|yml|yaml|bak|old|swp|dist|example)$">
+<FilesMatch "\.(json|md|log|sql|ini|yml|yaml|bak|old|swp|dist|example|cmsh)$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>
@@ -59,17 +59,6 @@ ErrorDocument 503 /502.html
     </IfModule>
 </FilesMatch>
 
-# Le fichier d'arborescence "cms" (sans extension) a la racine
-<Files "cms">
-    <IfModule mod_authz_core.c>
-        Require all denied
-    </IfModule>
-    <IfModule !mod_authz_core.c>
-        Order allow,deny
-        Deny from all
-    </IfModule>
-</Files>
-
 # ------------------------------------------------------------
 # 4. Reecriture d'URL
 # ------------------------------------------------------------
@@ -83,6 +72,14 @@ RewriteEngine On
 # --- Repertoires interdits en acces direct HTTP ---------------
 # includes/ : librairies internes, jamais appelees directement
 RewriteRule ^includes/ - [F,L]
+
+# data/ : donnees privees (users.json, compteurs de connexion).
+# Ce repertoire a aussi son propre .htaccess.
+RewriteRule ^data/ - [F,L]
+
+# themes/ : les .php sont des gabarits, inclus par le CMS et jamais
+# appeles directement. Les .css et les images du theme restent servis.
+RewriteRule ^themes/.+\.php$ - [F,L]
 
 # .git/ : expose tout l'historique et le code source
 RewriteRule ^\.git/ - [F,L]
@@ -100,7 +97,21 @@ RewriteRule ^(.*)$ index.php?page=$1 [L,QSA]
 </IfModule>
 
 # ------------------------------------------------------------
-# 5. En-tetes de securite
+# 5. Cache des ressources statiques
+#    Le CMS ajoute la date de modification en parametre d'URL
+#    (styles.css?v=...), donc une nouvelle version change l'adresse
+#    et contourne le cache immediatement. On peut alors garder les
+#    fichiers longtemps cote navigateur sans risque de servir une
+#    ancienne feuille de style.
+# ------------------------------------------------------------
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|woff2?|png|jpe?g|gif|webp|avif|svg|ico)$">
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+</IfModule>
+
+# ------------------------------------------------------------
+# 6. En-tetes de securite
 # ------------------------------------------------------------
 <IfModule mod_headers.c>
     # Empeche le navigateur de "deviner" le type MIME
@@ -115,8 +126,10 @@ RewriteRule ^(.*)$ index.php?page=$1 [L,QSA]
     # Desactive des APIs navigateur inutiles pour un CMS
     Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
-    # Cookies de session : non lisibles en JS, non envoyes en cross-site
-    Header always edit Set-Cookie ^(.*)$ "$1; HttpOnly; SameSite=Lax"
+    # Les drapeaux HttpOnly / SameSite / Secure du cookie de session sont
+    # poses par PHP dans includes/bootstrap.php. Pas de regle Header ici :
+    # elle ferait doublon et s'appliquerait aussi aux cookies des plugins,
+    # y compris ceux qui doivent rester lisibles en JavaScript.
 
     # A activer uniquement une fois le site 100% en HTTPS :
     # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"

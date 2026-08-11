@@ -1,0 +1,6 @@
+# Donnees d'execution : comptes, compteurs, caches
+/data/*
+!/data/.htaccess
+
+# Sauvegardes laissees par la migration .php -> .cmsh
+*.php.bak

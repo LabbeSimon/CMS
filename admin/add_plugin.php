@@ -1,42 +1,51 @@
 <?php
-session_start();
-if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
-    header('Location: ../login.php');
-    exit;
-}
+require_once __DIR__ . '/../includes/bootstrap.php';
+cms_require_admin('../login.php');
 
-$plugins_directory = '../plugins/';
+$error = '';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $plugin_name = preg_replace('/[^a-zA-Z0-9_-]/', '', $_POST['plugin_name']);
-    $plugin_content = $_POST['plugin_content'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
 
-    if (!empty($plugin_name) && !file_exists($plugins_directory . $plugin_name)) {
-        file_put_contents($plugins_directory . $plugin_name, "<?php\n// Plugin: {$plugin_name}\n" . $plugin_content);
-        header('Location: plugins.php');
-        exit;
+    $plugin_name    = preg_replace('/[^A-Za-z0-9_-]/', '', (string) (isset($_POST['plugin_name']) ? $_POST['plugin_name'] : ''));
+    $plugin_content = isset($_POST['plugin_content']) ? (string) $_POST['plugin_content'] : '';
+
+    if ($plugin_name === '') {
+        $error = 'Nom de plugin invalide : lettres, chiffres, tiret et underscore uniquement.';
+    } elseif (file_exists(CMS_PLUGINS_DIR . '/' . $plugin_name)) {
+        $error = 'Ce plugin existe deja.';
     } else {
-        echo "Une erreur est survenue : soit le plugin existe déjà, soit le nom est invalide.";
+        $body = "<?php\n// Plugin: " . str_replace(["\r", "\n"], '', $plugin_name) . "\n" . $plugin_content;
+
+        if (file_put_contents(CMS_PLUGINS_DIR . '/' . $plugin_name, $body, LOCK_EX) === false) {
+            $error = 'Ecriture impossible : verifiez les droits sur plugins/.';
+        } else {
+            header('Location: plugins.php');
+            exit;
+        }
     }
 }
+
+$adminTitle   = 'Ajouter un plugin';
+$adminSection = 'plugins';
+require __DIR__ . '/../includes/admin_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter un nouveau plugin</title>
-</head>
-<body>
-    <h1>Ajouter un nouveau plugin</h1>
-    <form action="add_plugin.php" method="POST">
-        <label for="plugin_name">Nom du plugin :</label>
-        <input type="text" name="plugin_name" id="plugin_name" required>
 
-        <label for="plugin_content">Contenu du plugin :</label>
-        <textarea name="plugin_content" id="plugin_content" rows="10" cols="50" required></textarea>
+<?php if ($error !== ''): ?>
+    <p class="erreur"><?php echo e($error); ?></p>
+<?php endif; ?>
 
-        <button type="submit">Créer le plugin</button>
-    </form>
-</body>
-</html>
+<form action="add_plugin.php" method="POST">
+    <?php echo csrf_field(); ?>
+
+    <label for="plugin_name">Nom du plugin</label>
+    <input type="text" name="plugin_name" id="plugin_name" pattern="[A-Za-z0-9_\-]+" required>
+
+    <label for="plugin_content">Contenu</label>
+    <textarea name="plugin_content" id="plugin_content" required></textarea>
+
+    <button type="submit">Créer le plugin</button>
+    <a href="plugins.php">Annuler</a>
+</form>
+
+<?php require __DIR__ . '/../includes/admin_footer.php'; ?>

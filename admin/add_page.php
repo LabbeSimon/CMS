@@ -1,42 +1,70 @@
 <?php
-session_start();
-if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
-    header('Location: ../login.php');
-    exit;
-}
+require_once __DIR__ . '/../includes/bootstrap.php';
+cms_require_admin('../login.php');
 
-$pages_directory = '../pages/';
+$error = '';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $page_name = preg_replace('/[^a-zA-Z0-9_-]/', '', $_POST['page_name']);
-    $page_content = $_POST['page_content'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
 
-    if (!empty($page_name) && !file_exists($pages_directory . $page_name . '.php')) {
-        file_put_contents($pages_directory . $page_name . '.php', "<?php\n?><h1>{$page_name}</h1>\n" . $page_content);
-        header('Location: pages.php');
-        exit;
+    $slug  = preg_replace('/[^A-Za-z0-9_-]/', '', (string) (isset($_POST['slug']) ? $_POST['slug'] : ''));
+    $titre = trim((string) (isset($_POST['title']) ? $_POST['title'] : ''));
+    $corps = isset($_POST['body']) ? (string) $_POST['body'] : '';
+
+    if ($slug === '') {
+        $error = 'Slug invalide : lettres, chiffres, tiret et underscore uniquement.';
+    } elseif (is_file(cmsh_path($slug))) {
+        $error = 'Une page porte deja ce slug.';
     } else {
-        echo "Une erreur est survenue : soit la page existe déjà, soit le nom est invalide.";
+        $meta                        = cmsh_defaults();
+        $meta['title']               = $titre !== '' ? $titre : $slug;
+        $meta['meta']['description'] = trim((string) (isset($_POST['description']) ? $_POST['description'] : ''));
+
+        $error = cmsh_save($slug, $meta, $corps);
+
+        if ($error === '') {
+            header('Location: edit_page.php?page=' . urlencode($slug));
+            exit;
+        }
     }
 }
+
+$adminTitle   = 'Créer une page';
+$adminSection = 'pages';
+require __DIR__ . '/../includes/admin_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter une nouvelle page</title>
-</head>
-<body>
-    <h1>Ajouter une nouvelle page</h1>
-    <form action="add_page.php" method="POST">
-        <label for="page_name">Nom de la page :</label>
-        <input type="text" name="page_name" id="page_name" required>
 
-        <label for="page_content">Contenu de la page :</label>
-        <textarea name="page_content" id="page_content" rows="10" cols="50" required></textarea>
+<?php if ($error !== ''): ?>
+    <p class="erreur"><?php echo e($error); ?></p>
+<?php endif; ?>
 
-        <button type="submit">Créer la page</button>
-    </form>
-</body>
-</html>
+<form action="add_page.php" method="POST">
+    <?php echo csrf_field(); ?>
+
+    <label for="title">Titre</label>
+    <input type="text" name="title" id="title" required>
+
+    <label for="slug">Adresse de la page</label>
+    <p class="aide">
+        Ce qui apparaîtra dans le navigateur après le nom du site, par exemple
+        <code>horaires</code> pour <code><?php echo e(cms_url('horaires')); ?></code>.
+        Lettres, chiffres et tirets uniquement.
+    </p>
+    <input type="text" name="slug" id="slug" pattern="[A-Za-z0-9_\-]+" required>
+
+    <label for="description">Description pour les moteurs de recherche</label>
+    <p class="aide">Une phrase qui résume la page. Elle s'affiche dans les résultats de recherche.</p>
+    <input type="text" name="description" id="description" maxlength="200">
+
+    <label for="body">Contenu de la page</label>
+    <p class="aide">
+        Sélectionnez un morceau de texte puis cliquez sur un bouton pour le mettre en forme.
+    </p>
+    <?php echo cms_editor_toolbar('body'); ?>
+    <textarea name="body" id="body" placeholder="<p>Votre texte.</p>"></textarea>
+
+    <button type="submit">Créer la page</button>
+    <a href="pages.php">Annuler</a>
+</form>
+
+<?php require __DIR__ . '/../includes/admin_footer.php'; ?>

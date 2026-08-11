@@ -1,11 +1,15 @@
 {
-    "page_title": "Change Me on config.json",
-    "meta_description": "Change Me on config.json.",
+    "page_title": "Mon site",
+    "meta_description": "Description du site, modifiable depuis le panneau d'administration.",
+    "theme": "standard",
     "navbar": {
         "Accueil": "index.php",
-        "Page 1": "/page1",
-        "Page 2": "/page2",
-        "Contact": "index.php?page=contact"
+        "Page 1": "page1"
     },
-    "footer_text": "2024 My CMS. Tous droits réservés."
+    "footer_text": "2026 Mon site. Tous droits réservés.",
+    "rayor_connect": {
+        "enabled": true,
+        "client_id": "",
+        "scopes": "openid profile email"
+    }
 }

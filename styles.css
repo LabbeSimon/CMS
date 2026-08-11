@@ -1,11 +1,1132 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+/* Feuille de style par defaut du CMS — style suisse */
 
-* {
-  font-family: "Montserrat", sans-serif;
+:root {
+    /* Couleurs */
+    --papier:      #ffffff;
+    --encre:       #111111;
+    --encre-douce: #666666;
+    --filet:       #111111;
+    --accent:      #e2001a;
+    --selection:   #ffe500;
+
+    /* Rythme vertical, base 8 */
+    --pas-1: 0.5rem;
+    --pas-2: 1rem;
+    --pas-3: 1.5rem;
+    --pas-4: 2.5rem;
+    --pas-5: 4rem;
+    --pas-6: 6rem;
+
+    /* Largeur de la colonne de texte */
+    --mesure: 34rem;
+
+    --pile: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+
+    /* Fonds secondaires : a peine plus sourds que le papier, pour poser */
+    --panneau:     #f7f7f5;
+    --barre-fond:  #ffffff;
+    --barre-encre: #111111;
 }
 
-ul {
-  color: white;
-  background-color: #add8e6;
+/* Pas de theme sombre : ce CMS est clair, et c'est un choix d'identite. */
+
+/* Base */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
-/* adding more css in few time */
+
+body {
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 5vw, 4rem) var(--pas-6);
+    max-width: 68rem;
+
+    font-family: var(--pile);
+    font-size: clamp(1rem, 0.95rem + 0.2vw, 1.0625rem);
+    line-height: 1.5;
+    font-weight: 400;
+
+    color: var(--encre);
+    background: var(--papier);
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+::selection {
+    background: var(--selection);
+    color: #111111;
+}
+
+/* Titres — flush left, interlignage serre, approche negative */
+
+h1, h2, h3, h4 {
+    margin: 0 0 var(--pas-2);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+}
+
+h1 {
+    font-size: clamp(2.5rem, 1.6rem + 4.5vw, 5.5rem);
+    margin-top: var(--pas-5);
+    margin-bottom: var(--pas-4);
+    hyphens: none;
+}
+
+h2 {
+    font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+    margin-top: var(--pas-5);
+}
+
+h3 {
+    font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.5rem);
+    margin-top: var(--pas-4);
+}
+
+h4 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: var(--pas-3);
+}
+
+/* Texte courant */
+
+p, ul, ol, dl, blockquote, table, figure, pre {
+    margin: 0 0 var(--pas-3);
+}
+
+p, li {
+    max-width: var(--mesure);
+}
+
+a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+}
+
+a:hover,
+a:focus-visible {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+}
+
+strong { font-weight: 700; }
+
+blockquote {
+    border-left: 2px solid var(--accent);
+    padding-left: var(--pas-2);
+    margin-left: 0;
+}
+
+code, pre, kbd {
+    font-family: "SF Mono", "Liberation Mono", Consolas, monospace;
+    font-size: 0.875em;
+}
+
+pre {
+    padding: var(--pas-2);
+    border: 1px solid var(--filet);
+    overflow-x: auto;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--filet);
+    margin: var(--pas-4) 0;
+}
+
+img, svg, video {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Listes — puces carrees, pas rondes */
+
+ul, ol { padding-left: 1.25rem; }
+
+ul { list-style: square; }
+
+li { margin-bottom: var(--pas-1); }
+
+li::marker { color: var(--accent); }
+
+/* En-tete et navigation */
+
+header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--pas-2) var(--pas-4);
+
+    padding: var(--pas-3) 0;
+    border-bottom: 1px solid var(--filet);
+}
+
+header nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pas-3);
+
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+header nav li { margin: 0; max-width: none; }
+
+header a,
+.admin-menu a {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+header a:hover,
+header a:focus-visible {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.35em;
+}
+
+.admin-menu {
+    font-size: 0.8125rem;
+    color: var(--encre-douce);
+}
+
+/* Outils de l'en-tete : bascule de theme et acces au compte */
+.outils {
+    display: flex;
+    align-items: center;
+    gap: var(--pas-2);
+}
+
+.admin-menu { display: inline-flex; gap: var(--pas-2); }
+
+/* Texte reserve aux lecteurs d'ecran */
+.sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* Bloc repliable des formulaires longs */
+details.bloc {
+    margin: var(--pas-3) 0;
+    padding: 0 var(--pas-3) var(--pas-2);
+    border: 1px solid var(--filet);
+    background: var(--panneau);
+}
+
+details.bloc > summary {
+    margin: 0 calc(-1 * var(--pas-3));
+    padding: var(--pas-2) var(--pas-3);
+
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+
+    cursor: pointer;
+}
+
+details.bloc[open] > summary { border-bottom: 1px solid var(--filet); }
+
+/* Lien d'evitement : masque jusqu'a la prise de focus au clavier */
+.saut-contenu {
+    position: absolute;
+    left: -9999px;
+}
+
+.saut-contenu:focus {
+    position: static;
+    display: inline-block;
+    margin: var(--pas-1) 0;
+    padding: var(--pas-1) var(--pas-2);
+    background: var(--accent);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+main { display: block; }
+
+/* Formulaires */
+
+label {
+    display: block;
+    margin: var(--pas-3) 0 var(--pas-1);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="search"],
+textarea,
+select {
+    display: block;
+    width: 100%;
+    max-width: var(--mesure);
+    padding: 0.625rem 0.75rem;
+
+    font: inherit;
+    color: var(--encre);
+    background: var(--papier);
+
+    border: 1px solid var(--filet);
+    border-radius: 0;
+}
+
+textarea {
+    max-width: 52rem;
+    min-height: 16rem;
+    resize: vertical;
+    font-family: "SF Mono", "Liberation Mono", Consolas, monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+button,
+input[type="submit"] {
+    display: inline-block;
+    margin-top: var(--pas-3);
+    padding: 0.6875rem 1.5rem;
+
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+
+    color: var(--papier);
+    background: var(--encre);
+    border: 1px solid var(--encre);
+    border-radius: 0;
+    cursor: pointer;
+}
+
+button:hover,
+input[type="submit"]:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff;
+}
+
+/* Boutons secondaires : ceux poses en ligne dans les listes de l'admin */
+li form { display: inline; }
+
+li form button {
+    margin-top: 0;
+    margin-left: var(--pas-1);
+    padding: 0.25rem 0.625rem;
+    font-size: 0.6875rem;
+    color: var(--encre);
+    background: transparent;
+}
+
+li form button:hover {
+    color: #ffffff;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Lien presente comme un bouton */
+a.bouton {
+    display: inline-block;
+    margin-top: var(--pas-2);
+    padding: 0.6875rem 1.5rem;
+
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    text-decoration: none;
+
+    color: var(--papier);
+    background: var(--encre);
+    border: 1px solid var(--encre);
+}
+
+a.bouton:hover,
+a.bouton:focus-visible {
+    color: #ffffff;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Choix d'installation — deux colonnes separees par un filet */
+
+.choix {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: var(--pas-4);
+
+    margin-top: var(--pas-4);
+    border-top: 1px solid var(--filet);
+}
+
+.choix section { padding-top: var(--pas-3); }
+
+.choix h2 {
+    margin-top: 0;
+    font-size: 1.25rem;
+}
+
+.choix small { color: var(--encre-douce); }
+
+/* Tableaux — filets uniquement */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: var(--pas-1) var(--pas-2) var(--pas-1) 0;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--filet);
+}
+
+th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 500;
+}
+
+/* Messages */
+
+[style*="color: red"],
+.erreur {
+    color: var(--accent) !important;
+    font-weight: 500;
+}
+
+/* Pied de page */
+
+footer {
+    margin-top: var(--pas-6);
+    padding-top: var(--pas-2);
+    border-top: 1px solid var(--filet);
+
+    font-size: 0.8125rem;
+    color: var(--encre-douce);
+}
+
+footer p { margin: 0; max-width: none; }
+
+/* Panneau d'administration */
+
+body.admin {
+    max-width: none;
+    padding: 0;
+}
+
+/* Barre horizontale */
+
+.barre {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    gap: var(--pas-3);
+    flex-wrap: wrap;
+
+    min-height: 3.5rem;
+    padding: 0 clamp(1rem, 3vw, 2rem);
+
+    background: var(--papier);
+    border-bottom: 1px solid var(--filet);
+}
+
+.marque {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+}
+
+.raccourcis {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pas-3);
+    margin-left: var(--pas-3);
+}
+
+.raccourcis a,
+.compte a {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.raccourcis a:hover,
+.compte a:hover {
+    color: var(--accent);
+}
+
+.compte {
+    display: flex;
+    align-items: center;
+    gap: var(--pas-2);
+    margin-left: auto;
+    font-size: 0.8125rem;
+}
+
+.compte .identite { font-weight: 500; }
+
+.avatar {
+    display: block;
+    width: 28px;
+    height: 28px;
+    object-fit: cover;
+    border: 1px solid var(--filet);
+}
+
+.etiquette {
+    display: inline-block;
+    margin-left: 0.25rem;
+    padding: 0 0.3em;
+
+    font-size: 0.625rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+
+    color: var(--accent);
+    border: 1px solid var(--accent);
+}
+
+/* Barre verticale */
+
+.cadre {
+    display: grid;
+    grid-template-columns: 14rem minmax(0, 1fr);
+    align-items: start;
+}
+
+.lateral {
+    position: sticky;
+    top: 3.5rem;
+
+    padding: var(--pas-3) 0;
+    border-right: 1px solid var(--filet);
+}
+
+.lateral .groupe {
+    margin: 0 0 var(--pas-1);
+    padding: 0 var(--pas-3);
+
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--encre-douce);
+}
+
+.lateral ul {
+    margin: 0 0 var(--pas-3);
+    padding: 0;
+    list-style: none;
+}
+
+.lateral li {
+    margin: 0;
+    max-width: none;
+}
+
+.lateral a {
+    display: block;
+    padding: 0.4375rem var(--pas-3);
+
+    font-size: 0.9375rem;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+}
+
+.lateral a:hover { color: var(--accent); }
+
+.lateral a.actif {
+    font-weight: 700;
+    border-left-color: var(--accent);
+}
+
+/* Zone de contenu */
+
+.contenu {
+    padding: var(--pas-3) clamp(1rem, 3vw, 2.5rem) var(--pas-6);
+    min-width: 0;
+}
+
+.contenu h1 {
+    margin-top: var(--pas-2);
+    margin-bottom: var(--pas-4);
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+}
+
+.contenu h2 { margin-top: var(--pas-4); }
+
+/* Chiffres du tableau de bord */
+
+.chiffres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pas-2);
+    margin-bottom: var(--pas-4);
+}
+
+.chiffres a {
+    display: block;
+    min-width: 9rem;
+    padding: var(--pas-2) var(--pas-3);
+
+    text-decoration: none;
+    border: 1px solid var(--filet);
+}
+
+.chiffres a:hover {
+    border-color: var(--accent);
+    color: inherit;
+}
+
+.chiffres .nombre {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.chiffres .etiquette-chiffre {
+    display: block;
+    margin-top: var(--pas-1);
+
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--encre-douce);
+}
+
+/* Tableaux d'objets */
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: var(--pas-2);
+    white-space: nowrap;
+}
+
+.actions form { display: inline; margin: 0; }
+
+.actions a {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+}
+
+.actions button {
+    margin-top: 0;
+    padding: 0.1875rem 0.5rem;
+    font-size: 0.6875rem;
+    color: var(--encre);
+    background: transparent;
+}
+
+.actions button:hover {
+    color: #ffffff;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Messages */
+
+.avis {
+    padding: var(--pas-1) var(--pas-2);
+    border-left: 3px solid var(--accent);
+    background: transparent;
+}
+
+/* Avertissement de securite : plus appuye qu'un simple avis */
+.alerte {
+    padding: var(--pas-2);
+    border: 2px solid var(--accent);
+    border-left-width: 8px;
+    background: var(--panneau);
+    max-width: none;
+}
+
+/* Encart d'invitation */
+.encart {
+    margin: var(--pas-3) 0;
+    padding: var(--pas-2) var(--pas-3);
+    border: 1px solid var(--filet);
+    background: var(--panneau);
+}
+
+.encart h3 { margin-top: var(--pas-1); }
+
+/* Liste de garanties : un carre rouge en puce, pas de retrait */
+.garanties {
+    list-style: none;
+    padding: 0;
+}
+
+.garanties li {
+    display: flex;
+    gap: 0.6em;
+    max-width: none;
+}
+
+.garanties li::before {
+    content: "";
+    flex: none;
+    width: 0.55em;
+    height: 0.55em;
+    margin-top: 0.5em;
+    background: var(--accent);
+}
+
+/* Choix du theme */
+
+.themes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--pas-2);
+    margin: var(--pas-2) 0 var(--pas-4);
+}
+
+.theme-carte {
+    display: block;
+    margin: 0;
+    padding: var(--pas-2);
+
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.875rem;
+    font-weight: 400;
+
+    border: 2px solid var(--filet);
+    cursor: pointer;
+}
+
+.theme-carte:hover { border-color: var(--accent); }
+
+.theme-carte.actif {
+    border-color: var(--accent);
+    background: var(--panneau);
+}
+
+.theme-carte input { width: auto; margin: 0 0 var(--pas-1); }
+
+.theme-carte strong {
+    display: block;
+    margin-top: var(--pas-1);
+    font-size: 1rem;
+}
+
+.theme-description {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--encre-douce);
+    line-height: 1.4;
+}
+
+/* Pastilles de couleur du theme */
+.pastilles {
+    display: flex;
+    gap: 0;
+    margin-top: var(--pas-1);
+}
+
+.pastilles span {
+    display: block;
+    width: 2rem;
+    height: 1.5rem;
+    border: 1px solid var(--filet);
+    margin-right: -1px;
+}
+
+/* Code d'erreur en grand, au-dessus du titre */
+.code-erreur {
+    margin: var(--pas-4) 0 0;
+    font-size: clamp(4rem, 16vw, 10rem);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--accent);
+    max-width: none;
+}
+
+/* Pages isolees : connexion, installation */
+body.page-etroite { max-width: 46rem; }
+
+/* Texte d'aide sous un libelle de champ */
+.aide {
+    margin: 0 0 var(--pas-1);
+    font-size: 0.8125rem;
+    color: var(--encre-douce);
+    max-width: 46rem;
+}
+
+/* Barre d'outils de redaction */
+.barre-outils {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+
+    margin-bottom: -1px;
+    padding: 0;
+}
+
+.barre-outils button {
+    margin: 0;
+    padding: 0.3rem 0.6rem;
+
+    font-size: 0.75rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+
+    color: var(--encre);
+    background: var(--panneau);
+    border: 1px solid var(--filet);
+}
+
+.barre-outils button:hover {
+    color: #ffffff;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Bouton presente comme un lien */
+button.lien {
+    margin: 0;
+    padding: 0;
+
+    font-size: inherit;
+    font-weight: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+
+    color: inherit;
+    background: none;
+    border: 0;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+button.lien:hover { color: var(--accent); background: none; }
+
+/* Rangee de boutons d'action en tete de liste */
+.ligne-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pas-2);
+    align-items: center;
+}
+
+.ligne-actions .bouton { margin-top: 0; }
+
+/* Case a cocher : libelle sur la meme ligne, pas en capitales */
+label.case {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.9375rem;
+    font-weight: 400;
+}
+
+label.case input { width: auto; margin: 0; }
+
+input[type="file"] {
+    display: block;
+    max-width: var(--mesure);
+    font: inherit;
+    font-size: 0.9375rem;
+}
+
+/* Lien d'annulation pose a cote d'un bouton */
+form > a {
+    margin-left: var(--pas-2);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    color: var(--encre-douce);
+}
+
+/* Ecrans etroits */
+
+@media (max-width: 48rem) {
+    .cadre { grid-template-columns: 1fr; }
+
+    .lateral {
+        position: static;
+        display: flex;
+        gap: var(--pas-3);
+        overflow-x: auto;
+
+        padding: var(--pas-1) var(--pas-2);
+        border-right: 0;
+        border-bottom: 1px solid var(--filet);
+    }
+
+    .lateral .groupe { display: none; }
+
+    .lateral ul {
+        display: flex;
+        gap: var(--pas-1);
+        margin: 0;
+    }
+
+    .lateral a {
+        border-left: 0;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+    }
+
+    .lateral a.actif {
+        border-left: 0;
+        border-bottom-color: var(--accent);
+    }
+
+    .raccourcis { margin-left: 0; }
+    .compte { margin-left: 0; }
+}
+
+/* Couche constructiviste */
+
+/* Bande diagonale : le motif signature, pose sous les barres */
+.bande {
+    height: 7px;
+    background:
+        repeating-linear-gradient(135deg,
+            var(--accent) 0 12px,
+            transparent 12px 24px),
+        var(--barre-fond);
+}
+
+/* Barre horizontale en aplat */
+
+body.admin .barre {
+    background: var(--barre-fond);
+    color: var(--barre-encre);
+    border-bottom: 3px solid var(--filet);
+}
+
+body.admin .barre a { color: var(--barre-encre); }
+
+body.admin .barre a:hover { color: var(--accent); }
+
+/* La marque devient un bloc rouge */
+body.admin .marque {
+    padding: 0.1em 0.45em;
+    background: var(--accent);
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+body.admin .marque:hover {
+    background: #ffffff;
+    color: var(--accent);
+}
+
+body.admin .compte .identite { color: var(--barre-encre); }
+
+body.admin .etiquette {
+    color: #ffffff;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+body.admin .avatar { border: 2px solid var(--accent); }
+
+/* Barre verticale : filet epais et reperes carres */
+
+.lateral { border-right-width: 2px; }
+
+.lateral .groupe {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-weight: 700;
+    color: var(--encre);
+}
+
+/* Carre rouge devant chaque groupe */
+.lateral .groupe::before {
+    content: "";
+    width: 0.6em;
+    height: 0.6em;
+    background: var(--accent);
+    flex: none;
+}
+
+.lateral a { border-left-width: 4px; }
+
+.lateral a.actif { background: linear-gradient(90deg, rgba(226, 0, 26, 0.12), transparent 60%); }
+
+/* Titres : filet epais au-dessus */
+
+.contenu h1 {
+    padding-top: var(--pas-2);
+    border-top: 4px solid var(--encre);
+}
+
+.contenu h2 {
+    padding-top: var(--pas-1);
+    border-top: 2px solid var(--encre);
+}
+
+/* Chiffres : bloc geometrique avec triangle d'angle */
+
+.chiffres a {
+    position: relative;
+    overflow: hidden;
+    border-width: 2px;
+}
+
+.chiffres a::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    width: 2.25rem;
+    height: 2.25rem;
+
+    background: var(--accent);
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+}
+
+.chiffres a:hover {
+    background: var(--encre);
+    color: var(--papier);
+    border-color: var(--encre);
+}
+
+.chiffres a:hover .etiquette-chiffre { color: var(--papier); }
+
+/* La page ouverte au centre */
+
+.apercu {
+    border: 2px solid var(--filet);
+    background: #ffffff;
+}
+
+.apercu .legende {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--pas-2);
+
+    padding: 0.4rem 0.75rem;
+
+    background: var(--panneau);
+    color: var(--encre);
+    border-bottom: 1px solid var(--filet);
+
+    font-size: 0.6875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.apercu .legende a {
+    color: var(--encre);
+    text-decoration: none;
+}
+
+.apercu .legende a:hover { color: var(--accent); }
+
+.apercu iframe {
+    display: block;
+    width: 100%;
+    height: min(65vh, 40rem);
+    border: 0;
+    background: #ffffff;
+}
+
+/* Atelier d'edition : le texte a gauche, la page a droite */
+.atelier {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--pas-3);
+    align-items: start;
+}
+
+.atelier textarea { max-width: none; }
+
+@media (max-width: 64rem) {
+    .atelier { grid-template-columns: 1fr; }
+}
+
+/* Le site public garde une touche du meme vocabulaire */
+
+body:not(.admin) header { border-bottom-width: 3px; }
+
+body:not(.admin) h1 { position: relative; }
+
+/* Impression */
+
+@media print {
+    body { max-width: none; padding: 0; color: #000; background: #fff; }
+    header nav, .admin-menu, button { display: none; }
+    a { text-decoration: none; }
+}
+
+/* Indicateur d'enregistrement automatique */
+
+.statut {
+    display: inline-block;
+    margin: 0 0 var(--pas-2);
+    padding: 0.2rem 0.6rem;
+
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+
+    color: var(--encre-douce);
+    border: 1px solid var(--filet);
+}
+
+.statut.ok        { color: var(--accent); border-color: var(--accent); }
+.statut.en-cours  { color: var(--encre-douce); }
+.statut.en-attente{ color: var(--encre); border-color: var(--encre); }
+.statut.erreur    { color: #ffffff; background: var(--accent); border-color: var(--accent); }

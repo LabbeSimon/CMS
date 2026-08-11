@@ -1,60 +1,84 @@
 <?php
-session_start();
+require_once __DIR__ . '/bootstrap.php';
 
+// Metadonnees de la page en cours, posees par index.php
+$page = isset($GLOBALS['cms_page']) ? $GLOBALS['cms_page'] : null;
+$meta = $page !== null ? $page['meta'] : cmsh_defaults();
 
-$configPath = __DIR__ . '/../config.json';
+$titreSite   = cms_config_get('page_title', 'CMS');
+$titrePage   = trim((string) $meta['title']);
+$titre       = $titrePage !== '' ? $titrePage . ' — ' . $titreSite : $titreSite;
 
+$description = $meta['meta']['description'] !== ''
+    ? $meta['meta']['description']
+    : cms_config_get('meta_description', '');
 
-if (file_exists($configPath)) {
-    $config = json_decode(file_get_contents($configPath), true);
-} else {
-    die("Fichier de configuration non trouvé.");
-}
+$robots    = $meta['meta']['robots'] !== '' ? $meta['meta']['robots'] : 'index, follow';
+$langue    = $meta['meta']['lang'] !== '' ? $meta['meta']['lang'] : 'fr';
+$canonical = $meta['meta']['canonical'];
 
+// Partage social : les valeurs Open Graph retombent sur celles de la page
+$ogTitre  = $meta['og']['title'] !== ''       ? $meta['og']['title']       : ($titrePage !== '' ? $titrePage : $titreSite);
+$ogDesc   = $meta['og']['description'] !== '' ? $meta['og']['description'] : $description;
+$ogImage  = $meta['og']['image'];
+$ogType   = $meta['og']['type'] !== '' ? $meta['og']['type'] : 'website';
 
-$pageTitle = isset($config['page_title']) ? $config['page_title'] : 'Change me in config.json';
-$metaDescription = isset($config['meta_description']) ? $config['meta_description'] : 'Change this description directly on config.json.';
-
-// every part like page 2 write here it's the default config change that is config.json
-$navbarItems = isset($config['navbar']) ? $config['navbar'] : [
-    'Accueil' => 'index.php',
-    'Page 1' => 'index.php?page=page1',
-    'Page 2' => 'index.php?page=page2',
-];
+$navbarItems = cms_config_get('navbar', ['Accueil' => 'index.php']);
 ?>
-
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?php echo e($langue); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="<?php echo htmlspecialchars($metaDescription); ?>">
-    <title><?php echo htmlspecialchars($pageTitle); ?></title>
-    <link rel="stylesheet" href="/styles.css">
+    <title><?php echo e($titre); ?></title>
+
+    <?php if ($description !== ''): ?>
+        <meta name="description" content="<?php echo e($description); ?>">
+    <?php endif; ?>
+    <?php if ($meta['meta']['keywords'] !== ''): ?>
+        <meta name="keywords" content="<?php echo e($meta['meta']['keywords']); ?>">
+    <?php endif; ?>
+    <meta name="robots" content="<?php echo e($robots); ?>">
+    <?php if ($canonical !== ''): ?>
+        <link rel="canonical" href="<?php echo e($canonical); ?>">
+    <?php endif; ?>
+
+    <meta property="og:title" content="<?php echo e($ogTitre); ?>">
+    <?php if ($ogDesc !== ''): ?>
+        <meta property="og:description" content="<?php echo e($ogDesc); ?>">
+    <?php endif; ?>
+    <?php if ($ogImage !== ''): ?>
+        <meta property="og:image" content="<?php echo e($ogImage); ?>">
+    <?php endif; ?>
+    <meta property="og:type" content="<?php echo e($ogType); ?>">
+    <meta name="twitter:card" content="<?php echo $ogImage !== '' ? 'summary_large_image' : 'summary'; ?>">
+
+    <?php echo cms_styles_links(); ?>
+    <?php do_action('head', $meta); ?>
 </head>
 <body>
+    <a class="saut-contenu" href="#contenu">Aller au contenu</a>
+
     <header>
-        <nav>
+        <nav aria-label="Navigation principale">
             <ul>
-                <?php
-                // création dynamique de la navbar
-                foreach ($navbarItems as $label => $link) {
-                    echo '<li><a href="' . htmlspecialchars($link) . '">' . htmlspecialchars($label) . '</a></li>';
-                }
-                ?>
+                <?php foreach ((array) $navbarItems as $label => $link): ?>
+                    <li><a href="<?php echo e(cms_url($link)); ?>"><?php echo e($label); ?></a></li>
+                <?php endforeach; ?>
             </ul>
         </nav>
-        <?php
-        // gestion zone admin
-        if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true) {
-            echo '<div class="admin-menu">';
-            echo '<a href="admin/index.php">Panneau d\'administration</a> | ';
-            echo '<a href="logout.php">Déconnexion</a>';
-            echo '</div>';
-        } else {
-            echo '<a href="login.php">Connexion</a>';
-        }
-        ?>
-    </header>
-</body>
 
+        <div class="outils">
+
+            <?php if (cms_is_admin()): ?>
+                <span class="admin-menu">
+                    <a href="<?php echo e(cms_url('admin/index.php')); ?>">Administration</a>
+                    <a href="<?php echo e(cms_url('logout.php')); ?>?token=<?php echo urlencode(csrf_token()); ?>">Deconnexion</a>
+                </span>
+            <?php else: ?>
+                <a href="<?php echo e(cms_url('login.php')); ?>">Connexion</a>
+            <?php endif; ?>
+        </div>
+    </header>
+
+    <main id="contenu">

@@ -1,0 +1,15 @@
+# Repertoire de donnees privees du CMS : users.json, compteurs de
+# connexion... Rien ici ne doit etre servi par HTTP.
+#
+# Cette regle est une seconde barriere : le .htaccess racine bloque deja
+# les .json sur tout le site. Si vous pouvez, deplacez carrement ce
+# repertoire au-dessus du docroot (voir CMS_DATA_DIR dans
+# includes/bootstrap.php).
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

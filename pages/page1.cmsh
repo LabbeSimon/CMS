@@ -1,0 +1,48 @@
+CMSH/1
+{
+    "cmsh": 1,
+    "title": "Page 1",
+    "slug": "page1",
+    "author": "cms",
+    "created": "2026-08-11T21:17:15+02:00",
+    "modified": "2026-08-11T21:17:15+02:00",
+    "modified_by": "cms",
+    "domain": "",
+    "checksum": "sha256:b97e4f340b57332bcc2517d2f429ea2f2d398670a89c02408e6e11545cc50ad7",
+    "requires": {
+        "cms": "1.0",
+        "php": "7.3",
+        "plugins": []
+    },
+    "meta": {
+        "description": "Page 1",
+        "keywords": "",
+        "robots": "index, follow",
+        "canonical": "",
+        "lang": "fr"
+    },
+    "og": {
+        "title": "",
+        "description": "",
+        "image": "",
+        "type": "website"
+    },
+    "hierarchy": {
+        "parent": null,
+        "order": 0,
+        "menu": false
+    },
+    "assets": {
+        "media": [],
+        "css": [],
+        "js": []
+    },
+    "comments": {
+        "enabled": false,
+        "count": 0
+    }
+}
+--
+<p>
+    Cette page se trouve dans <code>pages/page1.cmsh</code>. Remplacez son contenu par le vôtre.
+</p>

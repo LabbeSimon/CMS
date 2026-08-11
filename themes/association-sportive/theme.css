@@ -1,0 +1,178 @@
+/* Theme « Association sportive » */
+
+:root {
+    --papier:      #ffffff;
+    --encre:       #10231a;
+    --encre-douce: #5c6b62;
+    --filet:       #10231a;
+    --accent:      #0b7a3b;   /* vert franc */
+    --second:      #ffcc00;   /* jaune de signalisation */
+    --selection:   #ffcc00;
+    --panneau:     #f2f7f3;
+    --barre-fond:  #ffffff;
+    --barre-encre: #10231a;
+
+    --pile: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+}
+
+h1, h2 {
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+}
+
+h1 {
+    font-size: clamp(2.75rem, 1.6rem + 6vw, 6rem);
+    font-style: italic;   /* l'inclinaison, marqueur sportif de longue date */
+}
+
+/* Surlignage jaune derriere le titre de section */
+h2 {
+    display: inline-block;
+    padding: 0.1em 0.35em;
+    margin-left: -0.35em;
+    background: var(--second);
+}
+
+h3 { text-transform: uppercase; letter-spacing: 0.02em; }
+
+/* Bande diagonale sous l'en-tete, comme un ruban de piste */
+header {
+    border-bottom: 0;
+    position: relative;
+    padding-bottom: var(--pas-3);
+}
+
+header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 8px;
+    background:
+        repeating-linear-gradient(135deg,
+            var(--accent) 0 14px,
+            var(--second) 14px 28px);
+}
+
+header a { font-weight: 700; }
+
+a:hover, a:focus-visible { color: var(--accent); }
+
+li::marker { color: var(--accent); }
+
+/* Boutons pleins et larges : on clique avec le pouce, en extérieur */
+button,
+input[type="submit"],
+a.bouton {
+    padding: 0.875rem 1.75rem;
+    font-weight: 700;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+button:hover,
+input[type="submit"]:hover,
+a.bouton:hover {
+    color: var(--encre);
+    background: var(--second);
+    border-color: var(--second);
+}
+
+blockquote {
+    border-left: 6px solid var(--second);
+    font-weight: 500;
+}
+
+table th {
+    text-transform: uppercase;
+    background: var(--panneau);
+}
+
+footer {
+    border-top: 6px solid var(--accent);
+    font-weight: 500;
+}
+
+/* Gabarit : banniere, bande diagonale, navigation en bandeau */
+
+body { max-width: none; padding-left: 0; padding-right: 0; }
+
+.dedans {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+
+header.banniere {
+    display: block;
+    padding: var(--pas-4) 0 var(--pas-3);
+    background: var(--accent);
+    color: #ffffff;
+    border-bottom: 0;
+}
+
+header::after { content: none; }
+
+.club {
+    display: block;
+    font-size: clamp(2rem, 1rem + 6vw, 4.5rem);
+    font-weight: 700;
+    font-style: italic;
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.club-baseline {
+    margin: var(--pas-1) 0 0;
+    color: #ffffff;
+    font-weight: 500;
+    max-width: none;
+}
+
+.bande-sport {
+    height: 10px;
+    background: repeating-linear-gradient(135deg,
+        var(--second) 0 14px,
+        var(--encre) 14px 28px);
+}
+
+.nav-bandeau { background: var(--encre); }
+
+.nav-bandeau ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    list-style: none;
+}
+
+.nav-bandeau li { margin: 0; max-width: none; }
+
+.nav-bandeau a {
+    display: block;
+    padding: 0.7rem 1rem;
+    color: #ffffff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+}
+
+.nav-bandeau a:hover,
+.nav-bandeau a:focus-visible {
+    background: var(--second);
+    color: var(--encre);
+}
+
+footer { margin-top: 0; padding: var(--pas-3) 0; border-top: 0; }
+
+.footer-nom {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-style: italic;
+}

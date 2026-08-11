@@ -1,0 +1,143 @@
+/* Theme « Cabinet d'avocat » */
+
+:root {
+    --papier:      #fbfaf8;
+    --encre:       #12233f;   /* bleu nuit */
+    --encre-douce: #5f6b7d;
+    --filet:       #d8d2c6;
+    --accent:      #8a6a3b;   /* bronze */
+    --selection:   #efe4cf;
+    --panneau:     #f4f1ea;
+    --barre-fond:  #fbfaf8;
+    --barre-encre: #12233f;
+
+    --pile: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --pile-titres: Georgia, "Times New Roman", "Liberation Serif", serif;
+
+    /* Colonne plus etroite : le droit se lit lentement */
+    --mesure: 32rem;
+}
+
+body { font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.125rem); line-height: 1.65; }
+
+h1, h2, h3 {
+    font-family: var(--pile-titres);
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    line-height: 1.15;
+}
+
+h1 {
+    font-size: clamp(2.25rem, 1.6rem + 3vw, 4rem);
+    margin-bottom: var(--pas-3);
+}
+
+/* Filet bronze sous le titre principal, seule ornementation du theme */
+h1::after {
+    content: "";
+    display: block;
+    width: 4rem;
+    height: 2px;
+    margin-top: var(--pas-3);
+    background: var(--accent);
+}
+
+h4 { font-family: var(--pile); }
+
+header {
+    padding: var(--pas-4) 0;
+    border-bottom: 1px solid var(--filet);
+}
+
+header a {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+}
+
+a { text-underline-offset: 0.25em; }
+
+a:hover, a:focus-visible { color: var(--accent); }
+
+ul { list-style: none; padding-left: 0; }
+
+li { padding-left: 1.25rem; position: relative; }
+
+/* Puce discrete, dessinee plutot qu'heritee */
+main li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 0.4rem;
+    height: 1px;
+    background: var(--accent);
+}
+
+blockquote {
+    font-family: var(--pile-titres);
+    font-size: 1.125em;
+    border-left: 1px solid var(--accent);
+    padding-left: var(--pas-3);
+}
+
+button,
+input[type="submit"],
+a.bouton {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    background: var(--encre);
+    border-color: var(--encre);
+}
+
+button:hover,
+input[type="submit"]:hover,
+a.bouton:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+footer { border-top: 1px solid var(--filet); }
+
+/* Gabarit : masthead centre, navigation sous filet */
+
+header {
+    display: block;
+    text-align: center;
+    padding: var(--pas-5) 0 0;
+    border-bottom: 0;
+}
+
+.masthead { display: block; text-decoration: none; }
+
+.masthead-nom {
+    font-family: var(--pile-titres);
+    font-size: clamp(1.75rem, 1.2rem + 2.4vw, 3rem);
+    letter-spacing: 0.02em;
+}
+
+.masthead-baseline {
+    margin: var(--pas-1) auto 0;
+    font-family: var(--pile-titres);
+    font-style: italic;
+    color: var(--encre-douce);
+}
+
+header nav ul {
+    justify-content: center;
+    gap: var(--pas-4);
+
+    margin-top: var(--pas-4);
+    padding: var(--pas-2) 0;
+
+    border-top: 1px solid var(--filet);
+    border-bottom: 1px solid var(--filet);
+}
+
+header nav li { padding-left: 0; }
+header nav li::before { content: none; }
+
+.nav-service { color: var(--encre-douce); }
+
+footer { text-align: center; }
+
+.footer-nom { font-family: var(--pile-titres); font-size: 1.125rem; }
