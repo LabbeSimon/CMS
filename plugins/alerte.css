@@ -1,0 +1,27 @@
+.cms-alerte {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+
+    padding: 0.7rem clamp(1.25rem, 5vw, 4rem);
+
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #ffffff;
+    background: #b3132a;
+}
+
+.cms-alerte a { color: #ffffff; }
+
+.cms-alerte[data-niveau="info"]    { background: #12356b; }
+.cms-alerte[data-niveau="urgence"] { background: #a3000f; }
+
+.cms-alerte-etiquette {
+    padding: 0 0.4em;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #b3132a;
+    background: #ffffff;
+}

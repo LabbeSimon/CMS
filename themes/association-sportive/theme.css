@@ -1,0 +1,283 @@
+/* Theme « Association sportive » */
+
+:root {
+    --papier:      #ffffff;
+    --encre:       #10231a;
+    --encre-douce: #5c6b62;
+    --filet:       #10231a;
+    --accent:      #0b7a3b;   /* vert franc */
+    --second:      #ffcc00;   /* jaune de signalisation */
+    --selection:   #ffcc00;
+    --panneau:     #f2f7f3;
+    --barre-fond:  #ffffff;
+    --barre-encre: #10231a;
+
+    --pile: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+}
+
+h1, h2 {
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+}
+
+h1 {
+    font-size: clamp(2.75rem, 1.6rem + 6vw, 6rem);
+    font-style: italic;   /* l'inclinaison, marqueur sportif de longue date */
+}
+
+/* Surlignage jaune derriere le titre de section */
+h2 {
+    display: inline-block;
+    padding: 0.1em 0.35em;
+    margin-left: -0.35em;
+    background: var(--second);
+}
+
+h3 { text-transform: uppercase; letter-spacing: 0.02em; }
+
+/* Bande diagonale sous l'en-tete, comme un ruban de piste */
+header {
+    border-bottom: 0;
+    position: relative;
+    padding-bottom: var(--pas-3);
+}
+
+header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 8px;
+    background:
+        repeating-linear-gradient(135deg,
+            var(--accent) 0 14px,
+            var(--second) 14px 28px);
+}
+
+header a { font-weight: 700; }
+
+a:hover, a:focus-visible { color: var(--accent); }
+
+li::marker { color: var(--accent); }
+
+/* Boutons pleins et larges : on clique avec le pouce, en extérieur */
+button,
+input[type="submit"],
+a.bouton {
+    padding: 0.875rem 1.75rem;
+    font-weight: 700;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+button:hover,
+input[type="submit"]:hover,
+a.bouton:hover {
+    color: var(--encre);
+    background: var(--second);
+    border-color: var(--second);
+}
+
+blockquote {
+    border-left: 6px solid var(--second);
+    font-weight: 500;
+}
+
+table th {
+    text-transform: uppercase;
+    background: var(--panneau);
+}
+
+footer {
+    border-top: 6px solid var(--accent);
+    font-weight: 500;
+}
+
+/* Gabarit : banniere, bande diagonale, navigation en bandeau */
+
+body { max-width: none; padding-left: 0; padding-right: 0; }
+
+.dedans {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+
+header.banniere {
+    display: block;
+    padding: var(--pas-4) 0 var(--pas-3);
+    background: var(--accent);
+    color: #ffffff;
+    border-bottom: 0;
+}
+
+header::after { content: none; }
+
+.club {
+    display: block;
+    font-size: clamp(2rem, 1rem + 6vw, 4.5rem);
+    font-weight: 700;
+    font-style: italic;
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.club-baseline {
+    margin: var(--pas-1) 0 0;
+    color: #ffffff;
+    font-weight: 500;
+    max-width: none;
+}
+
+.bande-sport {
+    height: 10px;
+    background: repeating-linear-gradient(135deg,
+        var(--second) 0 14px,
+        var(--encre) 14px 28px);
+}
+
+.nav-bandeau { background: var(--encre); }
+
+.nav-bandeau ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    list-style: none;
+}
+
+.nav-bandeau li { margin: 0; max-width: none; }
+
+.nav-bandeau a {
+    display: block;
+    padding: 0.7rem 1rem;
+    color: #ffffff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+}
+
+.nav-bandeau a:hover,
+.nav-bandeau a:focus-visible {
+    background: var(--second);
+    color: var(--encre);
+}
+
+footer { margin-top: 0; padding: var(--pas-3) 0; border-top: 0; }
+
+.footer-nom {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-style: italic;
+}
+
+/* Hero, cartes du club, encart adhesion */
+
+.hero {
+    padding: clamp(3.5rem, 12vw, 7rem) 0;
+    background-color: var(--accent);
+    background-size: cover;
+    background-position: center;
+    color: #ffffff;
+}
+
+.hero-texte { max-width: 68rem; margin-inline: auto; padding-inline: clamp(1.25rem, 5vw, 4rem); }
+
+.hero h1 { margin: 0; color: #ffffff; text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); }
+
+.hero p {
+    margin: var(--pas-2) 0 0;
+    max-width: 38rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.corps, .sections-club {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+
+.corps { padding-top: var(--pas-4); }
+
+.cartes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--pas-2);
+    margin: 0 0 var(--pas-5);
+    padding: 0;
+    list-style: none;
+}
+
+.cartes li { margin: 0; max-width: none; }
+
+.cartes a {
+    display: block;
+    height: 100%;
+    padding: var(--pas-2);
+    text-decoration: none;
+    background: var(--panneau);
+    border-top: 6px solid var(--accent);
+}
+
+.cartes a:hover { background: var(--accent); color: #ffffff; border-top-color: var(--second); }
+.cartes a:hover .carte-texte { color: #ffffff; }
+
+.carte-titre { display: block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+.carte-texte { display: block; margin-top: 0.35rem; font-size: 0.875rem; color: var(--encre-douce); }
+
+.adhesion {
+    padding: var(--pas-4) 0;
+    background: var(--second);
+    color: var(--encre);
+}
+
+.adhesion h2 { margin-top: 0; background: none; padding: 0; margin-left: 0; }
+.adhesion .bouton { background: var(--encre); border-color: var(--encre); color: #ffffff; }
+.adhesion .bouton:hover { background: var(--accent); border-color: var(--accent); }
+
+main > h1, main > h2, main > h3, main > p, main > ul, main > ol {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+
+/* Boutons du hero, vignettes d'actualite, infos pratiques */
+
+.hero-actions { display: flex; flex-wrap: wrap; gap: var(--pas-2); margin-top: var(--pas-3); }
+
+.hero-actions .bouton { margin-top: 0; background: var(--second); border-color: var(--second); color: var(--encre); }
+.hero-actions .bouton:hover { background: #ffffff; border-color: #ffffff; color: var(--encre); }
+
+.cartes img { display: block; width: 100%; height: 10rem; object-fit: cover; }
+.carte-corps { display: block; padding: var(--pas-2); }
+.cartes a { padding: 0; }
+.cartes a:has(img) { padding: 0; }
+.cartes a:not(:has(img)) .carte-corps { padding: var(--pas-2); }
+
+.cartes time {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    color: var(--encre-douce);
+    font-weight: 400;
+    text-transform: none;
+}
+
+.pratique { padding: var(--pas-4) 0; background: var(--panneau); border-top: 6px solid var(--accent); }
+
+.pratique-colonnes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--pas-4);
+}
+
+.pratique h2 { margin-top: 0; background: none; padding: 0; margin-left: 0; font-size: 1.5rem; }

@@ -1,0 +1,394 @@
+/* Theme « Mairie » */
+
+:root {
+    --papier:      #ffffff;
+    --encre:       #161616;
+    --encre-douce: #666666;
+    --filet:       #dddddd;
+    --accent:      #000091;   /* bleu Republique */
+    --alerte:      #e1000f;   /* rouge, reserve aux alertes */
+    --selection:   #cacafb;
+    --panneau:     #f6f6f6;
+    --barre-fond:  #ffffff;
+    --barre-encre: #161616;
+
+    --pile: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Titres moins tranchants que le socle suisse : l'administration */
+h1, h2, h3, h4 {
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+}
+
+h1 {
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+    padding-bottom: var(--pas-2);
+    border-bottom: 4px solid var(--accent);
+}
+
+h2 { color: var(--accent); }
+
+/* Bandeau superieur : la barre bleue des sites publics */
+header {
+    border-bottom: 2px solid var(--accent);
+}
+
+header nav ul { gap: var(--pas-4); }
+
+header a { text-transform: none; letter-spacing: 0.02em; font-size: 0.9375rem; }
+
+a { text-decoration-thickness: 1px; }
+
+a:hover, a:focus-visible { color: var(--accent); }
+
+li::marker { color: var(--accent); }
+
+ul { list-style: disc; }
+
+/* Boutons pleins bleus, format administratif */
+button,
+input[type="submit"],
+a.bouton {
+    text-transform: none;
+    letter-spacing: 0.01em;
+    font-size: 0.9375rem;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff;
+}
+
+button:hover,
+input[type="submit"]:hover,
+a.bouton:hover {
+    background: #1212ff;
+    border-color: #1212ff;
+}
+
+/* Les messages d'erreur restent rouges : c'est le seul emploi du rouge */
+.erreur, .alerte { color: var(--alerte); border-color: var(--alerte); }
+
+.avis { border-left-color: var(--accent); }
+
+blockquote { border-left-color: var(--accent); }
+
+table th { color: var(--accent); }
+
+footer { border-top: 2px solid var(--accent); }
+
+/* Gabarit : barre utilitaire, bloc-marque, navigation pleine largeur */
+
+body { max-width: none; padding-left: 0; padding-right: 0; }
+
+.dedans {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+
+.barre-utilitaire {
+    padding: 0.4rem 0;
+    font-size: 0.8125rem;
+    color: var(--encre-douce);
+    background: var(--panneau);
+    border-bottom: 1px solid var(--filet);
+}
+
+.barre-utilitaire .dedans {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pas-2);
+    justify-content: space-between;
+}
+
+.barre-utilitaire a { color: var(--encre-douce); text-decoration: none; }
+.barre-utilitaire a:hover { color: var(--accent); }
+
+header {
+    display: block;
+    padding: var(--pas-3) 0;
+    border-bottom: 0;
+}
+
+.bloc-marque {
+    display: inline-block;
+    padding-left: var(--pas-2);
+    border-left: 6px solid var(--accent);
+    text-decoration: none;
+}
+
+.marque-nom {
+    display: block;
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.marque-sous {
+    display: block;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--encre-douce);
+}
+
+.nav-principale { background: var(--accent); }
+
+.nav-principale ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    list-style: none;
+}
+
+.nav-principale li { margin: 0; max-width: none; }
+
+.nav-principale a {
+    display: block;
+    padding: 0.7rem 1rem;
+    color: #ffffff;
+    font-size: 0.9375rem;
+    text-decoration: none;
+}
+
+.nav-principale a:hover,
+.nav-principale a:focus-visible {
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+}
+
+footer { margin-top: var(--pas-6); padding: var(--pas-3) 0; }
+
+.footer-nom { font-weight: 700; color: var(--accent); }
+
+.footer-liens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pas-3);
+    padding: 0;
+    list-style: none;
+}
+
+.footer-liens li { max-width: none; }
+
+.footer-mentions { font-size: 0.8125rem; }
+
+/* Banniere, tuiles d'acces rapide, encart contact */
+
+.banniere {
+    margin-bottom: var(--pas-4);
+    padding: clamp(3rem, 10vw, 6rem) 0;
+
+    background-color: var(--accent);
+    background-size: cover;
+    background-position: center;
+    color: #ffffff;
+}
+
+.banniere-texte {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+
+.banniere h1 {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.banniere p {
+    margin: var(--pas-2) 0 0;
+    max-width: 40rem;
+    font-size: 1.125rem;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.acces-rapides,
+.corps,
+.encart-contact {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+
+.tuiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--pas-2);
+
+    margin: 0 0 var(--pas-5);
+    padding: 0;
+    list-style: none;
+}
+
+.tuiles li { margin: 0; max-width: none; }
+
+.tuiles a {
+    display: block;
+    height: 100%;
+    padding: var(--pas-2);
+
+    text-decoration: none;
+    background: var(--panneau);
+    border-left: 4px solid var(--accent);
+}
+
+.tuiles a:hover {
+    background: var(--accent);
+    color: #ffffff;
+}
+
+.tuiles a:hover .tuile-texte { color: #ffffff; }
+
+.tuile-titre {
+    display: block;
+    font-weight: 700;
+    font-size: 1.0625rem;
+}
+
+.tuile-texte {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--encre-douce);
+}
+
+.encart-contact {
+    margin-top: var(--pas-5);
+    padding-top: var(--pas-3);
+    padding-bottom: var(--pas-3);
+    border-top: 4px solid var(--accent);
+}
+
+/* Pages sans gabarit (404, erreurs) : on garde la gouttiere */
+main > h1, main > h2, main > h3, main > p, main > ul, main > ol, main > table, main > form {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+
+/* Raccourcis de services, cartes d'actualite, pied en colonnes */
+
+.raccourcis-services {
+    margin-top: calc(-1 * var(--pas-4));
+    margin-bottom: var(--pas-5);
+    position: relative;
+}
+
+.raccourcis-services ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1px;
+    margin: 0;
+    padding-block: 0;
+    list-style: none;
+    background: var(--filet);
+    border: 1px solid var(--filet);
+}
+
+.raccourcis-services li { margin: 0; max-width: none; }
+
+.raccourcis-services a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+
+    height: 100%;
+    padding: var(--pas-2) 0.5rem;
+
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    color: var(--encre);
+    background: var(--papier);
+}
+
+.raccourcis-services a:hover { color: #ffffff; background: var(--accent); }
+.raccourcis-services svg { color: var(--accent); }
+.raccourcis-services a:hover svg { color: #ffffff; }
+
+.actualites { padding: var(--pas-4) 0; background: var(--panneau); }
+
+.cartes-actu {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    gap: var(--pas-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.cartes-actu li { margin: 0; max-width: none; }
+
+.cartes-actu a {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+    background: var(--papier);
+    border-bottom: 4px solid var(--accent);
+}
+
+.cartes-actu img,
+.vignette-vide {
+    display: block;
+    width: 100%;
+    height: 9rem;
+    object-fit: cover;
+}
+
+.vignette-vide {
+    background:
+        repeating-linear-gradient(135deg, rgba(0,0,145,0.10) 0 10px, transparent 10px 20px),
+        var(--panneau);
+}
+
+.actu-corps { display: block; padding: var(--pas-2); }
+
+.rubrique {
+    display: inline-block;
+    margin-bottom: 0.4rem;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #ffffff;
+    background: var(--accent);
+}
+
+.actu-titre { display: block; font-weight: 700; font-size: 1.0625rem; line-height: 1.25; }
+
+.cartes-actu time {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    color: var(--encre-douce);
+}
+
+.actu-texte { display: block; margin-top: 0.4rem; font-size: 0.875rem; color: var(--encre-douce); }
+
+.cartes-actu a:hover .actu-titre { color: var(--accent); }
+
+.pied-colonnes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: var(--pas-3);
+}
+
+.pied-colonnes p { margin: 0 0 0.35rem; max-width: none; }
+
+.pied-titre {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--encre-douce);
+    margin-bottom: 0.5rem !important;
+}
+
+.footer-liens { flex-direction: column; gap: 0.35rem; }

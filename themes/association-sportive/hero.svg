@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" preserveAspectRatio="xMidYMid slice" role="img" aria-label="">
+    <rect width="1200" height="360" fill="#0b7a3b"/>
+
+    <g opacity="0.16" fill="#ffffff">
+        <path d="M-100 360 L300 -40 L420 -40 L20 360 Z"/>
+        <path d="M180 360 L580 -40 L640 -40 L240 360 Z"/>
+        <path d="M900 360 L1300 -40 L1420 -40 L1020 360 Z"/>
+    </g>
+
+    <g transform="translate(600 180)">
+        <circle r="86" fill="none" stroke="#ffcc00" stroke-width="6"/>
+        <path d="M-86 0 h172 M0 -86 v172" stroke="#ffcc00" stroke-width="4" opacity="0.5"/>
+        <circle r="30" fill="none" stroke="#ffcc00" stroke-width="4"/>
+    </g>
+
+    <rect x="0" y="348" width="1200" height="12" fill="#ffcc00"/>
+</svg>

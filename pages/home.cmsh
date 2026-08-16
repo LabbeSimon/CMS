@@ -1,0 +1,57 @@
+CMSH/1
+{
+    "cmsh": 1,
+    "title": "Un CMS sans base de données",
+    "slug": "home",
+    "author": "cms",
+    "created": "2026-08-11T21:17:15+02:00",
+    "modified": "2026-08-11T21:17:15+02:00",
+    "modified_by": "cms",
+    "domain": "",
+    "checksum": "sha256:67465b0860c6ce551f640bbadb6e4333728bfac9929df524c6da31269d99b4ea",
+    "requires": {
+        "cms": "1.0",
+        "php": "7.3",
+        "plugins": []
+    },
+    "meta": {
+        "description": "Un CMS sans base de données",
+        "keywords": "",
+        "robots": "index, follow",
+        "canonical": "",
+        "lang": "fr"
+    },
+    "og": {
+        "title": "",
+        "description": "",
+        "image": "",
+        "type": "website"
+    },
+    "hierarchy": {
+        "parent": null,
+        "order": 0,
+        "menu": false
+    },
+    "assets": {
+        "media": [],
+        "css": [],
+        "js": []
+    },
+    "comments": {
+        "enabled": false,
+        "count": 0
+    }
+}
+--
+<p>
+    Cette page est un fichier dans <code>pages/</code>. Vous pouvez la modifier depuis le
+    panneau d'administration, ou directement avec un éditeur de texte.
+</p>
+
+<h2>Pour commencer</h2>
+
+<ul>
+    <li>Changez le titre du site et le menu dans Réglages</li>
+    <li>Choisissez un thème adapté à votre structure</li>
+    <li>Ajoutez vos pages depuis le panneau</li>
+</ul>

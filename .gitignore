@@ -1,0 +1,13 @@
+# Donnees d'execution : comptes, compteurs, caches
+/data/*
+!/data/.htaccess
+
+# Fichiers fusionnes, regeneres automatiquement
+/assets/cache/
+
+# Medias deposes par l'utilisateur
+/media/*
+!/media/.gitkeep
+
+# Sauvegardes laissees par la migration .php -> .cmsh
+*.php.bak
