@@ -1,5 +1,5 @@
 <?php
-/** Export : un fichier seul, ou tout un type dans une archive zip */
+// Export : un fichier seul, ou tout un type dans une archive zip
 require_once __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/transfer.php';
 cms_require_admin('../login.php');
@@ -7,9 +7,8 @@ cms_require_admin('../login.php');
 $type = (isset($_GET['type']) && $_GET['type'] === 'plugin') ? 'plugin' : 'page';
 $dir  = cms_transfer_dir($type);
 
-/** En-tetes communs a tous les telechargements */
-function cms_envoyer_entetes($nomFichier, $taille = null)
-{
+// En-tetes communs a tous les telechargements
+function cms_envoyer_entetes($nomFichier, $taille = null) {
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename="' . str_replace('"', '', $nomFichier) . '"');
     header('X-Content-Type-Options: nosniff');

@@ -2,9 +2,18 @@
     "page_title": "Mon site",
     "meta_description": "Description du site, modifiable depuis le panneau d'administration.",
     "theme": "standard",
+    "banner": "",
     "navbar": {
         "Accueil": "index.php",
         "Page 1": "page1"
+    },
+    "shortcuts": [],
+    "figures": [],
+    "contact": {
+        "adresse": "",
+        "telephone": "",
+        "email": "",
+        "horaires": ""
     },
     "footer_text": "2026 Mon site. Tous droits réservés.",
     "rayor_connect": {

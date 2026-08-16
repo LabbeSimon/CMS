@@ -1,11 +1,12 @@
 <?php
-/** Depart du flux Rayor Connect */
+// Depart du flux Rayor Connect
 
 // L'installation passe par ici : ne pas se faire renvoyer vers register.php
 define('CMS_SKIP_SETUP', true);
 require_once __DIR__ . '/../includes/bootstrap.php';
 
-if (!cms_rayor_enabled()) {
+// Le plugin peut avoir ete retire : ces deux pages n'ont alors plus de raison d'etre.
+if (!function_exists('cms_rayor_enabled') || !cms_rayor_enabled()) {
     http_response_code(404);
     exit('Rayor Connect est desactive sur ce site.');
 }
@@ -30,7 +31,7 @@ $_SESSION['rayor'] = [
     'expires' => time() + 600,
 ];
 
-$url = CMS_RAYOR_AUTHORIZE . '?' . http_build_query([
+$url = RAYOR_AUTHORIZE . '?' . http_build_query([
     'client_id'     => $clientId,
     'redirect_uri'  => cms_rayor_redirect_uri(),
     'scope'         => cms_rayor_scopes(),

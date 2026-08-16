@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/bootstrap.php';
 
-/** Installation : creation du compte administrateur */
+// Installation : creation du compte administrateur
 define('CMS_MAX_ACCOUNTS', 1);
 define('CMS_MIN_PASSWORD_LENGTH', 8);
 
@@ -118,8 +118,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     aucun mot de passe stocké sur ce serveur : le site ne conserve que
                     votre identifiant Rayor.
                 </p>
-                <?php if (cms_rayor_enabled()): ?>
-                    <p><a class="bouton" href="<?php echo e(cms_url('auth/rayor.php')); ?>?intent=setup">Continuer avec Rayor</a></p>
+                <?php if (function_exists("cms_rayor_bouton") && cms_rayor_enabled()): ?>
+                    <p><?php echo cms_rayor_bouton("setup"); ?></p>
                 <?php else: ?>
                     <p><small>Désactivé dans <code>config.json</code> (<code>rayor_connect.enabled</code>).</small></p>
                 <?php endif; ?>

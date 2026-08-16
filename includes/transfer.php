@@ -1,18 +1,16 @@
 <?php
-/** Import et export des pages et des plugins */
+// Import et export des pages et des plugins
 require_once __DIR__ . '/bootstrap.php';
 
 define('CMS_IMPORT_MAX_SIZE', 512 * 1024); // 512 Ko par fichier
 
-/** Repertoire cible selon le type d'objet */
-function cms_transfer_dir($type)
-{
+// Repertoire cible selon le type d'objet
+function cms_transfer_dir($type) {
     return $type === 'plugin' ? CMS_PLUGINS_DIR : CMS_PAGES_DIR;
 }
 
-/** Un nom de fichier acceptable pour ce type d'objet */
-function cms_transfer_name_ok($type, $name)
-{
+// Un nom de fichier acceptable pour ce type d'objet
+function cms_transfer_name_ok($type, $name) {
     if ($name === '' || $name !== basename($name) || $name[0] === '.') {
         return false;
     }
@@ -25,9 +23,8 @@ function cms_transfer_name_ok($type, $name)
     return (bool) preg_match('/^[A-Za-z0-9][A-Za-z0-9_-]{0,63}\.cmsh$/', $name);
 }
 
-/** Ecrit un fichier importe apres validation */
-function cms_transfer_store($type, $name, $contenu, $ecraser = false)
-{
+// Ecrit un fichier importe apres validation
+function cms_transfer_store($type, $name, $contenu, $ecraser = false) {
     if (!cms_transfer_name_ok($type, $name)) {
         return 'Nom de fichier refuse : ' . $name;
     }
@@ -49,9 +46,8 @@ function cms_transfer_store($type, $name, $contenu, $ecraser = false)
     return '';
 }
 
-/** Traite un envoi de formulaire : un fichier seul, ou une archive zip */
-function cms_transfer_import($type, array $fichier, $ecraser = false)
-{
+// Traite un envoi de formulaire : un fichier seul, ou une archive zip
+function cms_transfer_import($type, array $fichier, $ecraser = false) {
     if (!isset($fichier['error']) || $fichier['error'] !== UPLOAD_ERR_OK) {
         $raisons = [
             UPLOAD_ERR_INI_SIZE   => 'Fichier trop volumineux pour la configuration du serveur.',
@@ -128,9 +124,8 @@ function cms_transfer_import($type, array $fichier, $ecraser = false)
     return $erreur === '' ? [1, []] : [0, [$erreur]];
 }
 
-/** Liste les fichiers exportables d'un type */
-function cms_transfer_list($type)
-{
+// Liste les fichiers exportables d'un type
+function cms_transfer_list($type) {
     $dir   = cms_transfer_dir($type);
     $liste = [];
 

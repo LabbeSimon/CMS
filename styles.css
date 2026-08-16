@@ -1130,3 +1130,30 @@ body:not(.admin) h1 { position: relative; }
 .statut.en-cours  { color: var(--encre-douce); }
 .statut.en-attente{ color: var(--encre); border-color: var(--encre); }
 .statut.erreur    { color: #ffffff; background: var(--accent); border-color: var(--accent); }
+
+/* Bibliotheque de medias */
+
+.galerie {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--pas-3);
+    padding: 0;
+    list-style: none;
+}
+
+.galerie li { margin: 0; max-width: none; border: 1px solid var(--filet); }
+
+.galerie img { display: block; width: 100%; height: 9rem; object-fit: cover; }
+
+.galerie-nom { margin: var(--pas-1) var(--pas-1) 0; font-weight: 500; font-size: 0.875rem; word-break: break-all; }
+.galerie-info { margin: 0 var(--pas-1); font-size: 0.75rem; color: var(--encre-douce); }
+.galerie-url { margin: var(--pas-1); }
+.galerie-url input { font-size: 0.75rem; padding: 0.25rem; }
+.galerie form { margin: 0 var(--pas-1) var(--pas-1); }
+.galerie button { margin-top: 0; padding: 0.2rem 0.5rem; font-size: 0.6875rem; }
+
+.galerie-choix { display: flex; flex-wrap: wrap; gap: var(--pas-1); padding: 0; list-style: none; }
+.galerie-choix li { margin: 0; max-width: none; }
+.galerie-choix button { padding: 0; border: 2px solid transparent; }
+.galerie-choix button:hover { border-color: var(--accent); background: none; }
+.galerie-choix img { display: block; width: 120px; height: 75px; object-fit: cover; }

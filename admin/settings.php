@@ -1,5 +1,5 @@
 <?php
-/** Reglages du site : personne ne devrait avoir a ouvrir un fichier. */
+// Reglages du site : personne ne devrait avoir a ouvrir un fichier
 require_once __DIR__ . '/../includes/bootstrap.php';
 cms_require_admin('../login.php');
 
@@ -9,36 +9,94 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
 
-    $themes = cms_themes_list();
-    $choisi = isset($_POST['theme']) ? (string) $_POST['theme'] : 'standard';
-    $config['theme'] = isset($themes[$choisi]) ? $choisi : 'standard';
+    /**
+     * Une cle n'est reecrite que si son champ est present dans la
+     * requete. Sans cette regle, un formulaire incomplet — page coupee,
+     * enregistrement automatique parti trop tot — effacerait le menu et
+     * les coordonnees en silence.
+     */
+    $texte = function ($champ, $defaut = '') {
+        return array_key_exists($champ, $_POST) ? trim((string) $_POST[$champ]) : $defaut;
+    };
 
-    $config['page_title']       = trim((string) $_POST['page_title']);
-    $config['meta_description'] = trim((string) $_POST['meta_description']);
-    $config['footer_text']      = trim((string) $_POST['footer_text']);
+    if (array_key_exists('theme', $_POST)) {
+        $themes          = cms_themes_list();
+        $choisi          = (string) $_POST['theme'];
+        $config['theme'] = isset($themes[$choisi]) ? $choisi : 'standard';
+    }
 
-    // Menu : on repart des lignes envoyees, les vides sont ignorees
-    $navbar   = [];
-    $libelles = isset($_POST['nav_label']) ? (array) $_POST['nav_label'] : [];
-    $liens    = isset($_POST['nav_link']) ? (array) $_POST['nav_link'] : [];
-
-    foreach ($libelles as $i => $libelle) {
-        $libelle = trim((string) $libelle);
-        $lien    = isset($liens[$i]) ? trim((string) $liens[$i]) : '';
-
-        if ($libelle !== '' && $lien !== '') {
-            $navbar[$libelle] = $lien;
+    foreach (['page_title', 'meta_description', 'footer_text', 'banner'] as $champ) {
+        if (array_key_exists($champ, $_POST)) {
+            $config[$champ] = $texte($champ);
         }
     }
-    $config['navbar'] = $navbar;
 
-    $config['rayor_connect'] = [
-        'enabled'   => !empty($_POST['rayor_enabled']),
-        'client_id' => trim((string) $_POST['rayor_client_id']),
-        'scopes'    => trim((string) $_POST['rayor_scopes']) !== ''
-            ? trim((string) $_POST['rayor_scopes'])
-            : 'openid profile email',
-    ];
+    // Menu : on repart des lignes envoyees, les vides sont ignorees
+    if (array_key_exists('nav_label', $_POST)) {
+        $navbar = [];
+        $liens  = isset($_POST['nav_link']) ? (array) $_POST['nav_link'] : [];
+
+        foreach ((array) $_POST['nav_label'] as $i => $libelle) {
+            $libelle = trim((string) $libelle);
+            $lien    = isset($liens[$i]) ? trim((string) $liens[$i]) : '';
+
+            if ($libelle !== '' && $lien !== '') {
+                $navbar[$libelle] = $lien;
+            }
+        }
+        $config['navbar'] = $navbar;
+    }
+
+    // Raccourcis de services, affiches sous la banniere
+    if (array_key_exists('rac_label', $_POST)) {
+        $raccourcis = [];
+        $rn = isset($_POST['rac_link']) ? (array) $_POST['rac_link'] : [];
+
+        foreach ((array) $_POST['rac_label'] as $i => $libelle) {
+            $libelle = trim((string) $libelle);
+            $lien    = isset($rn[$i]) ? trim((string) $rn[$i]) : '';
+
+            if ($libelle !== '' && $lien !== '') {
+                $raccourcis[] = ['label' => $libelle, 'link' => $lien];
+            }
+        }
+        $config['shortcuts'] = $raccourcis;
+    }
+
+    // Chiffres mis en avant (adherents, adoptions, licencies...)
+    if (array_key_exists('chiffre_nombre', $_POST)) {
+        $chiffres = [];
+        $cl = isset($_POST['chiffre_label']) ? (array) $_POST['chiffre_label'] : [];
+
+        foreach ((array) $_POST['chiffre_nombre'] as $i => $nombre) {
+            $nombre  = trim((string) $nombre);
+            $libelle = isset($cl[$i]) ? trim((string) $cl[$i]) : '';
+
+            if ($nombre !== '' && $libelle !== '') {
+                $chiffres[] = ['nombre' => $nombre, 'label' => $libelle];
+            }
+        }
+        $config['figures'] = $chiffres;
+    }
+
+    if (array_key_exists('contact_adresse', $_POST)) {
+        $config['contact'] = [
+            'adresse'   => $texte('contact_adresse'),
+            'telephone' => $texte('contact_telephone'),
+            'horaires'  => $texte('contact_horaires'),
+            'email'     => $texte('contact_email'),
+        ];
+    }
+
+    if (array_key_exists('rayor_scopes', $_POST)) {
+        $scopes = $texte('rayor_scopes');
+
+        $config['rayor_connect'] = [
+            'enabled'   => !empty($_POST['rayor_enabled']),
+            'client_id' => $texte('rayor_client_id'),
+            'scopes'    => $scopes !== '' ? $scopes : 'openid profile email',
+        ];
+    }
 
     $ecrit   = cms_config_save($config);
     $message = $ecrit
@@ -60,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $navbar = (array) cms_config_get('navbar', []);
-$rayor  = cms_rayor_config();
+$rayor  = function_exists("cms_rayor_config") ? cms_rayor_config() : [];
 
 $adminTitle   = 'Réglages';
 $adminSection = 'reglages';
@@ -117,6 +175,28 @@ require __DIR__ . '/../includes/admin_header.php';
     <input type="text" name="footer_text" id="footer_text"
            value="<?php echo e(cms_config_get('footer_text', '')); ?>">
 
+    <label for="banner">Photo de bannière</label>
+    <p class="aide">
+        La photo affichée en haut du site : une vue de votre commune, de votre stade,
+        de vos locaux. Déposez-la dans <a href="media.php">Médias</a>, puis collez son
+        adresse ici. Une page peut avoir sa propre photo, qui prend alors le dessus.
+    </p>
+    <input type="text" name="banner" id="banner" placeholder="media/ma-photo.jpg"
+           value="<?php echo e(cms_config_get('banner', '')); ?>">
+
+    <?php $bibliotheque = cms_media_list(); ?>
+    <?php if ($bibliotheque): ?>
+        <ul class="galerie-choix">
+            <?php foreach (array_slice($bibliotheque, 0, 8) as $img): ?>
+                <li>
+                    <button type="button" class="lien" onclick="document.getElementById('banner').value='media/<?php echo e($img['nom']); ?>';document.getElementById('banner').dispatchEvent(new Event('input',{bubbles:true}));">
+                        <img src="<?php echo e(cms_media_url($img['nom'])); ?>" alt="<?php echo e($img['nom']); ?>" loading="lazy" width="120" height="75">
+                    </button>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+
     <h2>Menu</h2>
 
     <p>Laissez une ligne vide pour retirer une entrée. Un lien comme <code>page1</code>
@@ -154,6 +234,100 @@ require __DIR__ . '/../includes/admin_header.php';
         </tbody>
     </table>
 
+    <h2>Raccourcis de services</h2>
+
+    <p class="aide">
+        Les boutons affichés juste sous la bannière : démarches en ligne, portail famille,
+        paiement, contact. C'est ce que les visiteurs viennent chercher en premier.
+    </p>
+
+    <table>
+        <thead><tr><th>Libellé</th><th>Lien</th></tr></thead>
+        <tbody>
+        <?php
+        // Borne calculee avant la boucle : count() sur un tableau qu'on
+        // remplit ne s'arrete jamais.
+        $raccourcis = (array) cms_config_get('shortcuts', []);
+        $total      = count($raccourcis) + 3;
+        for ($i = count($raccourcis); $i < $total; $i++) {
+            $raccourcis[] = ['label' => '', 'link' => ''];
+        }
+        ?>
+        <?php foreach ($raccourcis as $i => $r): ?>
+            <tr>
+                <td>
+                    <label class="sr" for="rac_label_<?php echo $i; ?>">Libellé</label>
+                    <input type="text" name="rac_label[]" id="rac_label_<?php echo $i; ?>"
+                           value="<?php echo e(isset($r['label']) ? $r['label'] : ''); ?>">
+                </td>
+                <td>
+                    <label class="sr" for="rac_link_<?php echo $i; ?>">Lien</label>
+                    <input type="text" name="rac_link[]" id="rac_link_<?php echo $i; ?>"
+                           value="<?php echo e(isset($r['link']) ? $r['link'] : ''); ?>">
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <h2>Chiffres mis en avant</h2>
+
+    <p class="aide">
+        Adoptions réalisées, adhérents, licenciés, années d'existence. Les associations
+        et les clubs les affichent en grand : c'est ce qui donne confiance.
+    </p>
+
+    <table>
+        <thead><tr><th>Nombre</th><th>Libellé</th></tr></thead>
+        <tbody>
+        <?php
+        $chiffres = (array) cms_config_get('figures', []);
+        $total    = count($chiffres) + 3;
+        for ($i = count($chiffres); $i < $total; $i++) {
+            $chiffres[] = ['nombre' => '', 'label' => ''];
+        }
+        ?>
+        <?php foreach ($chiffres as $i => $ch): ?>
+            <tr>
+                <td>
+                    <label class="sr" for="chiffre_nombre_<?php echo $i; ?>">Nombre</label>
+                    <input type="text" name="chiffre_nombre[]" id="chiffre_nombre_<?php echo $i; ?>"
+                           placeholder="1 450" value="<?php echo e(isset($ch['nombre']) ? $ch['nombre'] : ''); ?>">
+                </td>
+                <td>
+                    <label class="sr" for="chiffre_label_<?php echo $i; ?>">Libellé</label>
+                    <input type="text" name="chiffre_label[]" id="chiffre_label_<?php echo $i; ?>"
+                           placeholder="adoptions par an" value="<?php echo e(isset($ch['label']) ? $ch['label'] : ''); ?>">
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <h2>Coordonnées</h2>
+
+    <p class="aide">Affichées dans le pied de page. Les horaires sont l'information la plus consultée d'un site de mairie.</p>
+
+    <?php $contact = (array) cms_config_get('contact', []); ?>
+
+    <label for="contact_adresse">Adresse</label>
+    <input type="text" name="contact_adresse" id="contact_adresse"
+           value="<?php echo e(isset($contact['adresse']) ? $contact['adresse'] : ''); ?>">
+
+    <label for="contact_telephone">Téléphone</label>
+    <input type="text" name="contact_telephone" id="contact_telephone"
+           value="<?php echo e(isset($contact['telephone']) ? $contact['telephone'] : ''); ?>">
+
+    <label for="contact_email">Adresse e-mail</label>
+    <input type="text" name="contact_email" id="contact_email"
+           value="<?php echo e(isset($contact['email']) ? $contact['email'] : ''); ?>">
+
+    <label for="contact_horaires">Horaires d'ouverture</label>
+    <input type="text" name="contact_horaires" id="contact_horaires"
+           placeholder="Du lundi au vendredi, 8h30-12h et 14h-17h30"
+           value="<?php echo e(isset($contact['horaires']) ? $contact['horaires'] : ''); ?>">
+
+    <?php if (function_exists("cms_rayor_enabled")): ?>
     <details class="bloc">
         <summary>Connexion Rayor Connect</summary>
 
@@ -171,6 +345,7 @@ require __DIR__ . '/../includes/admin_header.php';
         <input type="text" name="rayor_scopes" id="rayor_scopes"
                value="<?php echo e(cms_rayor_scopes()); ?>">
     </details>
+    <?php endif; ?>
 
     <button type="submit" class="si-sans-js">Enregistrer</button>
 </form>

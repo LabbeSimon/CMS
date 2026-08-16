@@ -1,5 +1,5 @@
 <?php
-/** Coquille du panneau d'administration : barre horizontale (marque, */
+// Coquille du panneau d'administration : barre horizontale (marque,
 require_once __DIR__ . '/bootstrap.php';
 
 $adminTitle   = isset($adminTitle) ? $adminTitle : 'Administration';
@@ -11,6 +11,7 @@ $base        = cms_base_uri();
 $menu = [
     'tableau'  => ['Tableau de bord', 'index.php'],
     'pages'    => ['Pages',           'pages.php'],
+    'medias'   => ['Médias',          'media.php'],
     'plugins'  => ['Plugins',         'plugins.php'],
     'reglages' => ['Réglages',        'settings.php'],
     'securite' => ['Sécurité',        'security.php'],
@@ -25,6 +26,7 @@ $menu = [
     <title><?php echo e($adminTitle); ?> — Administration</title>
     <link rel="stylesheet" href="<?php echo e(cms_asset_url('styles.css')); ?>">
     <?php echo cms_theme_link(); ?>
+    <?php do_action('admin_head'); ?>
 </head>
 <body class="admin">
     <a class="saut-contenu" href="#contenu">Aller au contenu</a>
@@ -73,4 +75,5 @@ $menu = [
         </nav>
 
         <main class="contenu" id="contenu">
+            <?php do_action('admin_notices'); ?>
             <h1><?php echo e($adminTitle); ?></h1>

@@ -1,13 +1,25 @@
 <?php
-/** Plugin: Secure By Rayor Version: 1.0 */
+/**
+ * Plugin: Secure By Rayor
+ * Version: 1.0
+ * Description: Filtre les visiteurs signales par la base de reputation d'IP Secure By Rayor.
+ * Author: CMS
+ * CSS-Priority: -1
+ * JS-Priority: -1
+ *
+ * Interroge secure.rayor.fr pour l'adresse du visiteur et refuse
+ * l'acces au-dela d'un score d'abus configurable. Aucune clef livree :
+ * l'appel anonyme est le mode nominal, une clef ne fait que relever les
+ * quotas. Chaque verdict est mis en cache, sinon chaque visite paierait
+ * un aller-retour reseau.
+ */
 
 define('SBR_BASE',      'https://secure.rayor.fr');
 define('SBR_DIR',       CMS_DATA_DIR . '/secure-rayor');
 define('SBR_CACHE',     SBR_DIR . '/cache.json');
 define('SBR_CACHE_MAX', 5000);
 
-function sbr_config()
-{
+function sbr_config() {
     static $conf = null;
 
     if ($conf === null) {
@@ -24,25 +36,21 @@ function sbr_config()
     return $conf;
 }
 
-function sbr_config_save(array $conf)
-{
+function sbr_config_save(array $conf) {
     return cms_write_json(CMS_DATA_DIR . '/secure-rayor.json', $conf);
 }
 
-/** Le plugin tourne des qu'il est active : la clef est facultative */
-function sbr_ready()
-{
+// Le plugin tourne des qu'il est active : la clef est facultative
+function sbr_ready() {
     return !empty(sbr_config()['enabled']);
 }
 
-/** Dernier resultat connu de l'API, pour que le panneau puisse alerter */
-function sbr_state()
-{
+// Dernier resultat connu de l'API, pour que le panneau puisse alerter
+function sbr_state() {
     return cms_read_json(SBR_DIR . '/state.json');
 }
 
-function sbr_state_set($code, $detail = '')
-{
+function sbr_state_set($code, $detail = '') {
     if (!is_dir(SBR_DIR)) {
         @mkdir(SBR_DIR, 0750, true);
     }
@@ -54,15 +62,13 @@ function sbr_state_set($code, $detail = '')
     ]);
 }
 
-/** Adresse du visiteur. X-Forwarded-For est ignore : il est falsifiable */
-function sbr_ip()
-{
+// Adresse du visiteur. X-Forwarded-For est ignore : il est falsifiable
+function sbr_ip() {
     return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
 }
 
-/** Appel a l'API. Renvoie le tableau "data", ou null en cas d'echec */
-function sbr_api_check($ip)
-{
+// Appel a l'API. Renvoie le tableau "data", ou null en cas d'echec
+function sbr_api_check($ip) {
     $conf = sbr_config();
 
     if (!function_exists('curl_init')) {
@@ -72,7 +78,6 @@ function sbr_api_check($ip)
     $entetes = [];
 
     // La clef est facultative : elle ne fait que relever les quotas.
-    // mode nominal, la clef ne sert qu'a relever les quotas.
     if (!empty($conf['api_key'])) {
         $entetes[] = 'Key: ' . $conf['api_key'];
     }
@@ -123,9 +128,8 @@ function sbr_api_check($ip)
     return $json['data'];
 }
 
-/** Verdict pour une adresse : cache d'abord, API ensuite */
-function sbr_verdict($ip)
-{
+// Verdict pour une adresse : cache d'abord, API ensuite
+function sbr_verdict($ip) {
     $conf  = sbr_config();
     $cache = cms_read_json(SBR_CACHE);
     $now   = time();
@@ -167,9 +171,8 @@ function sbr_verdict($ip)
     return $verdict;
 }
 
-/** Signalement d'une adresse. Ecrit dans une base communautaire : reste */
-function sbr_report($ip, $categories, $commentaire)
-{
+// Signalement : ecrit dans une base communautaire, donc desactive par defaut.
+function sbr_report($ip, $categories, $commentaire) {
     $conf = sbr_config();
 
     if (empty($conf['api_key']) || empty($conf['report_bruteforce']) || !function_exists('curl_init')) {
@@ -197,9 +200,8 @@ function sbr_report($ip, $categories, $commentaire)
     return true;
 }
 
-/** Page de refus. Explicite, avec le recours : un faux positif doit */
-function sbr_bloquer($ip, $score)
-{
+// Page de refus. Explicite, avec le recours : un faux positif doit
+function sbr_bloquer($ip, $score) {
     http_response_code(403);
     header('Content-Type: text/html; charset=UTF-8');
     ?>

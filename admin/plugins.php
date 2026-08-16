@@ -63,6 +63,25 @@ require __DIR__ . '/../includes/admin_header.php';
     <p class="erreur"><?php echo e($erreur); ?></p>
 <?php endforeach; ?>
 
+<?php if (!empty($GLOBALS['cms_plugin_errors'])): ?>
+    <p class="alerte">
+        <strong>Un plugin a échoué pendant cette requête.</strong> Le site continue de
+        fonctionner : l'erreur est isolée, elle n'a pas interrompu la page.
+    </p>
+    <table>
+        <thead><tr><th>Point d'accroche</th><th>Erreur</th><th>Fichier</th></tr></thead>
+        <tbody>
+        <?php foreach ($GLOBALS['cms_plugin_errors'] as $err): ?>
+            <tr>
+                <td><?php echo e($err['hook']); ?></td>
+                <td><?php echo e($err['message']); ?></td>
+                <td><?php echo e($err['fichier'] . ':' . $err['ligne']); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>
+
 <p class="ligne-actions">
     <a class="bouton" href="add_plugin.php">Créer un plugin</a>
     <a class="bouton" href="export.php?type=plugin&amp;all=1">Tout exporter (.zip)</a>
@@ -118,6 +137,61 @@ require __DIR__ . '/../includes/admin_header.php';
     <?php endif; ?>
     </tbody>
 </table>
+
+<h2>Fusion des styles et des scripts</h2>
+
+<p class="aide">
+    Le CSS et le JS de tous les plugins sont concaténés dans un fichier unique, ordonné
+    par la priorité déclarée par chaque plugin : <code>1</code> tout en haut,
+    <code>64000</code> tout en bas, <code>-1</code> pour rester dans un fichier séparé.
+    À priorité égale, l'ordre suit le nom du plugin.
+</p>
+
+<?php foreach (['css', 'js'] as $type): ?>
+    <?php
+    list($fusion, $separes) = cms_collect_assets($type);
+    list($bundle, )         = cms_build_bundle($type);
+    ?>
+
+    <h3><?php echo strtoupper($type); ?></h3>
+
+    <?php if (!$fusion && !$separes): ?>
+        <p>Aucun plugin n'apporte de <?php echo strtoupper($type); ?>.</p>
+    <?php else: ?>
+        <table>
+            <thead><tr><th>Ordre</th><th>Plugin</th><th>Priorité</th><th>Poids</th></tr></thead>
+            <tbody>
+            <?php foreach ($fusion as $i => $a): ?>
+                <tr>
+                    <td><?php echo $i + 1; ?></td>
+                    <td><?php echo e($a['slug']); ?></td>
+                    <td><?php echo (int) $a['priorite']; ?></td>
+                    <td><?php echo e(round(filesize($a['fichier']) / 1024, 1)); ?> Ko</td>
+                </tr>
+            <?php endforeach; ?>
+            <?php foreach ($separes as $slug => $fichier): ?>
+                <tr>
+                    <td>—</td>
+                    <td><?php echo e($slug); ?></td>
+                    <td>-1 <span class="etiquette">fichier séparé</span></td>
+                    <td><?php echo e(round(filesize($fichier) / 1024, 1)); ?> Ko</td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <?php if ($bundle !== ''): ?>
+            <p class="aide">
+                Fichier fusionné : <code><?php echo e(basename($bundle)); ?></code>,
+                <?php echo e(round(filesize(CMS_ROOT . '/' . $bundle) / 1024, 1)); ?> Ko,
+                <?php echo count($fusion); ?> plugin<?php echo count($fusion) > 1 ? 's' : ''; ?>
+                en <strong>une seule requête</strong><?php if ($separes): ?>,
+                plus <?php echo count($separes); ?> requête<?php echo count($separes) > 1 ? 's' : ''; ?>
+                séparée<?php echo count($separes) > 1 ? 's' : ''; ?><?php endif; ?>.
+            </p>
+        <?php endif; ?>
+    <?php endif; ?>
+<?php endforeach; ?>
 
 <h2>Importer</h2>
 

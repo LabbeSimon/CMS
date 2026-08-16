@@ -7,7 +7,9 @@ $footerText = cms_config_get('footer_text', 'CMS. Tous droits reserves.');
 
     <footer>
         <p>&copy; <?php echo e($footerText); ?></p>
-        <?php do_action('footer'); ?>
+        <?php echo cms_plugin_scripts(); ?>
+
+        <?php do_action("footer"); ?>
     </footer>
 </body>
 </html>

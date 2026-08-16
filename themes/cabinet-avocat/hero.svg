@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" preserveAspectRatio="xMidYMid slice" role="img" aria-label="">
+    <rect width="1200" height="340" fill="#12233f"/>
+
+    <g stroke="#8a6a3b" stroke-width="1.5" fill="none" opacity="0.55">
+        <path d="M600 90 v150"/>
+        <path d="M470 130 h260"/>
+        <circle cx="600" cy="86" r="6" fill="#8a6a3b" stroke="none"/>
+        <path d="M470 130 l-34 62 h68 Z"/>
+        <path d="M730 130 l-34 62 h68 Z"/>
+        <path d="M560 240 h80 v10 h-80 Z" fill="#8a6a3b" stroke="none" opacity="0.7"/>
+    </g>
+
+    <g fill="#ffffff" opacity="0.04">
+        <rect x="60" y="60" width="240" height="220"/>
+        <rect x="900" y="60" width="240" height="220"/>
+    </g>
+
+    <rect x="0" y="336" width="1200" height="4" fill="#8a6a3b"/>
+</svg>

@@ -1,5 +1,5 @@
 <?php
-/** Theme Protection : bandeau nom et baseline, navigation sous filet. */
+// Theme Protection : bandeau nom et baseline, navigation sous filet
 require_once dirname(dirname(__DIR__)) . '/includes/bootstrap.php';
 ?>
 <!DOCTYPE html>
@@ -33,4 +33,4 @@ require_once dirname(dirname(__DIR__)) . '/includes/bootstrap.php';
         </nav>
     </header>
 
-    <main id="contenu" class="dedans">
+    <main id="contenu">

@@ -1,5 +1,5 @@
 <?php
-/** Theme Mairie : barre utilitaire, bloc-marque, navigation pleine largeur. */
+// Theme Mairie : barre utilitaire, bloc-marque, navigation pleine largeur
 require_once dirname(dirname(__DIR__)) . '/includes/bootstrap.php';
 ?>
 <!DOCTYPE html>
@@ -36,4 +36,4 @@ require_once dirname(dirname(__DIR__)) . '/includes/bootstrap.php';
         </ul>
     </nav>
 
-    <main id="contenu" class="dedans">
+    <main id="contenu">

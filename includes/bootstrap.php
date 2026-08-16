@@ -1,5 +1,5 @@
 <?php
-/** Bootstrap du CMS */
+// Bootstrap du CMS
 
 // ---------------------------------------------------------------------
 
@@ -7,7 +7,7 @@ define('CMS_VERSION', '1.0');
 
 define('CMS_ROOT', dirname(__DIR__));
 
-/** Repertoire des donnees privees */
+// Repertoire des donnees privees
 define('CMS_DATA_DIR', CMS_ROOT . '/data');
 
 define('CMS_USERS_FILE',    CMS_DATA_DIR . '/users.json');
@@ -55,9 +55,8 @@ unset($cms_legacy_users);
 
 // ---------------------------------------------------------------------
 
-/** Lit un fichier JSON et renvoie toujours un tableau */
-function cms_read_json($file)
-{
+// Lit un fichier JSON et renvoie toujours un tableau
+function cms_read_json($file) {
     if (!is_file($file)) {
         return [];
     }
@@ -66,9 +65,8 @@ function cms_read_json($file)
     return is_array($data) ? $data : [];
 }
 
-/** Ecrit un fichier JSON avec verrou exclusif */
-function cms_write_json($file, array $data)
-{
+// Ecrit un fichier JSON avec verrou exclusif
+function cms_write_json($file, array $data) {
     $dir = dirname($file);
     if (!is_dir($dir) && !@mkdir($dir, 0750, true)) {
         return false;
@@ -78,9 +76,8 @@ function cms_write_json($file, array $data)
     return $json !== false && file_put_contents($file, $json, LOCK_EX) !== false;
 }
 
-/** Configuration du site, chargee une seule fois par requete */
-function cms_config()
-{
+// Configuration du site, chargee une seule fois par requete
+function cms_config() {
     static $config = null;
     if ($config === null) {
         $config = cms_read_json(CMS_CONFIG_FILE);
@@ -89,15 +86,13 @@ function cms_config()
     return $config;
 }
 
-/** Enregistre la configuration du site */
-function cms_config_save(array $config)
-{
+// Enregistre la configuration du site
+function cms_config_save(array $config) {
     return cms_write_json(CMS_CONFIG_FILE, $config);
 }
 
-/** Valeur de configuration avec repli */
-function cms_config_get($key, $default = null)
-{
+// Valeur de configuration avec repli
+function cms_config_get($key, $default = null) {
     $config = cms_config();
 
     return isset($config[$key]) ? $config[$key] : $default;
@@ -105,9 +100,8 @@ function cms_config_get($key, $default = null)
 
 // ---------------------------------------------------------------------
 
-/** Prefixe URL du CMS : '/' a la racine du domaine, '/cms/' si le site */
-function cms_base_uri()
-{
+// Prefixe URL du CMS : '/' a la racine du domaine, '/cms/' si le site
+function cms_base_uri() {
     static $base = null;
     if ($base !== null) {
         return $base;
@@ -132,9 +126,8 @@ function cms_base_uri()
     return $base;
 }
 
-/** 'page1' ou '/page1' -> URL valide quel que soit le repertoire d'installation. */
-function cms_url($link)
-{
+// 'page1' ou '/page1' -> URL valide quel que soit le repertoire d'installation
+function cms_url($link) {
     $link = (string) $link;
 
     if ($link === '' || preg_match('#^([a-z][a-z0-9+.-]*:|//|\#)#i', $link)) {
@@ -146,15 +139,13 @@ function cms_url($link)
 
 // ---------------------------------------------------------------------
 
-/** Echappe une valeur pour affichage HTML (texte ou attribut) */
-function e($value)
-{
+// Echappe une valeur pour affichage HTML (texte ou attribut)
+function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-/** URL d'une ressource statique, avec sa date de modification en */
-function cms_asset_url($chemin)
-{
+// URL d'une ressource statique, avec sa date de modification en
+function cms_asset_url($chemin) {
     $chemin  = ltrim((string) $chemin, '/');
     $absolu  = CMS_ROOT . '/' . $chemin;
     $version = is_file($absolu) ? filemtime($absolu) : CMS_VERSION;
@@ -166,17 +157,15 @@ function cms_asset_url($chemin)
 
 define('CMS_THEMES_DIR', CMS_ROOT . '/themes');
 
-/** Identifiant du theme actif. 'standard' correspond au socle seul */
-function cms_current_theme()
-{
+// Identifiant du theme actif. 'standard' correspond au socle seul
+function cms_current_theme() {
     $theme = (string) cms_config_get('theme', 'standard');
 
     return preg_match('/^[a-z0-9_-]+$/', $theme) ? $theme : 'standard';
 }
 
-/** Themes disponibles, decrits par themes/<slug>/theme.json */
-function cms_themes_list()
-{
+// Themes disponibles, decrits par themes/<slug>/theme.json
+function cms_themes_list() {
     $themes = [
         'standard' => [
             'name'        => 'Standard',
@@ -207,17 +196,140 @@ function cms_themes_list()
     return $themes;
 }
 
-/** Repertoire du theme actif, ou '' pour le socle seul */
-function cms_theme_dir()
-{
+define('CMS_MEDIA_DIR', CMS_ROOT . '/media');
+define('CMS_MEDIA_MAX', 4 * 1024 * 1024);
+
+// URL publique d'un media
+function cms_media_url($nom) {
+    return cms_asset_url('media/' . basename((string) $nom));
+}
+
+// Images de la bibliotheque, la plus recente d'abord
+function cms_media_list() {
+    if (!is_dir(CMS_MEDIA_DIR)) {
+        return [];
+    }
+
+    $images = [];
+
+    foreach (scandir(CMS_MEDIA_DIR) as $entree) {
+        $chemin = CMS_MEDIA_DIR . '/' . $entree;
+
+        if ($entree[0] === '.' || !is_file($chemin)) {
+            continue;
+        }
+
+        $taille = @getimagesize($chemin);
+        if ($taille === false) {
+            continue;
+        }
+
+        $images[] = [
+            'nom'     => $entree,
+            'largeur' => $taille[0],
+            'hauteur' => $taille[1],
+            'taille'  => filesize($chemin),
+            'date'    => filemtime($chemin),
+        ];
+    }
+
+    usort($images, function ($a, $b) {
+        return $b['date'] - $a['date'];
+    });
+
+    return $images;
+}
+
+/**
+ * Enregistre une image envoyee. Renvoie '' ou un message d'erreur.
+ *
+ * Le type est deduit du contenu par getimagesize, jamais de l'extension
+ * ni de l'en-tete du navigateur, tous deux choisis par le client. Le SVG
+ * est refuse : il peut contenir du script.
+ */
+function cms_media_store(array $fichier) {
+    if (!isset($fichier['error']) || $fichier['error'] !== UPLOAD_ERR_OK) {
+        return 'Envoi echoue.';
+    }
+
+    if (!is_uploaded_file($fichier['tmp_name'])) {
+        return 'Fichier invalide.';
+    }
+
+    if ($fichier['size'] > CMS_MEDIA_MAX) {
+        return 'Image trop lourde (4 Mo maximum).';
+    }
+
+    $info = @getimagesize($fichier['tmp_name']);
+
+    $extensions = [
+        IMAGETYPE_JPEG => 'jpg',
+        IMAGETYPE_PNG  => 'png',
+        IMAGETYPE_WEBP => 'webp',
+        IMAGETYPE_AVIF => 'avif',
+    ];
+
+    if ($info === false || !isset($extensions[$info[2]])) {
+        return 'Ce fichier n\'est pas une image JPEG, PNG, WebP ou AVIF.';
+    }
+
+    $base = pathinfo((string) $fichier['name'], PATHINFO_FILENAME);
+    $base = strtolower(preg_replace('/[^A-Za-z0-9_-]+/', '-', $base));
+    $base = trim($base, '-');
+
+    if ($base === '') {
+        $base = 'image';
+    }
+
+    if (!is_dir(CMS_MEDIA_DIR) && !@mkdir(CMS_MEDIA_DIR, 0755, true)) {
+        return 'Impossible de creer le repertoire media/.';
+    }
+
+    $nom = $base . '.' . $extensions[$info[2]];
+    $i   = 2;
+    while (file_exists(CMS_MEDIA_DIR . '/' . $nom)) {
+        $nom = $base . '-' . $i++ . '.' . $extensions[$info[2]];
+    }
+
+    if (!@move_uploaded_file($fichier['tmp_name'], CMS_MEDIA_DIR . '/' . $nom)) {
+        return 'Ecriture impossible : verifiez les droits sur media/.';
+    }
+
+    @chmod(CMS_MEDIA_DIR . '/' . $nom, 0644);
+
+    return '';
+}
+
+/**
+ * Visuel de banniere : la photo de la page, sinon celle du site, sinon
+ * l'illustration livree avec le theme.
+ */
+function cms_page_visual(array $meta, $defaut) {
+    if (!empty($meta['og']['image'])) {
+        return cms_url($meta['og']['image']);
+    }
+
+    $site = cms_site_banner();
+
+    return $site !== '' ? $site : $defaut;
+}
+
+// Photo de banniere du site, utilisee par les themes a defaut de visuel de page
+function cms_site_banner() {
+    $banner = (string) cms_config_get('banner', '');
+
+    return $banner === '' ? '' : cms_url($banner);
+}
+
+// Repertoire du theme actif, ou '' pour le socle seul
+function cms_theme_dir() {
     $theme = cms_current_theme();
 
     return $theme === 'standard' ? '' : CMS_THEMES_DIR . '/' . $theme;
 }
 
-/** Metadonnees du theme actif (theme.json) */
-function cms_theme_meta()
-{
+// Metadonnees du theme actif (theme.json)
+function cms_theme_meta() {
     static $meta = null;
 
     if ($meta === null) {
@@ -228,9 +340,8 @@ function cms_theme_meta()
     return $meta;
 }
 
-/** Resout un gabarit : la version du theme si elle existe, sinon celle */
-function cms_template($nom)
-{
+// Resout un gabarit : la version du theme si elle existe, sinon celle
+function cms_template($nom) {
     $nom = preg_replace('/[^a-z0-9_-]/', '', (string) $nom);
     $dir = cms_theme_dir();
 
@@ -243,9 +354,8 @@ function cms_template($nom)
     return is_file($socle) ? $socle : '';
 }
 
-/** Feuilles de style de la page publique */
-function cms_styles_links()
-{
+// Feuilles de style de la page publique
+function cms_styles_links() {
     $meta   = cms_theme_meta();
     $liens  = '';
 
@@ -260,12 +370,13 @@ function cms_styles_links()
             . e(cms_asset_url('themes/' . cms_current_theme() . '/theme.css')) . '">';
     }
 
+    $liens .= cms_plugin_styles();
+
     return $liens;
 }
 
-/** Contenu complet du <head> d'une page publique : titre, metadonnees, */
-function cms_page_head()
-{
+// Contenu complet du <head> d'une page publique : titre, metadonnees,
+function cms_page_head() {
     $page = isset($GLOBALS['cms_page']) ? $GLOBALS['cms_page'] : null;
     $meta = $page !== null ? $page['meta'] : cmsh_defaults();
 
@@ -319,24 +430,21 @@ function cms_page_head()
     return $html;
 }
 
-/** Langue du document, definie par la page */
-function cms_page_lang()
-{
+// Langue du document, definie par la page
+function cms_page_lang() {
     $page = isset($GLOBALS['cms_page']) ? $GLOBALS['cms_page'] : null;
     $meta = $page !== null ? $page['meta'] : cmsh_defaults();
 
     return $meta['meta']['lang'] !== '' ? $meta['meta']['lang'] : 'fr';
 }
 
-/** Navigation principale, telle que definie dans les reglages */
-function cms_nav_items()
-{
+// Navigation principale, telle que definie dans les reglages
+function cms_nav_items() {
     return (array) cms_config_get('navbar', ['Accueil' => 'index.php']);
 }
 
-/** Bloc « Connexion » ou « Administration », commun a tous les themes */
-function cms_admin_links()
-{
+// Bloc « Connexion » ou « Administration », commun a tous les themes
+function cms_admin_links() {
     if (cms_is_admin()) {
         return '<a href="' . e(cms_url('admin/index.php')) . '">Administration</a> '
             . '<a href="' . e(cms_url('logout.php')) . '?token=' . urlencode(csrf_token()) . '">Déconnexion</a>';
@@ -345,9 +453,8 @@ function cms_admin_links()
     return '<a href="' . e(cms_url('login.php')) . '">Connexion</a>';
 }
 
-/** Conserve pour compatibilite : n'emet plus que la feuille du theme */
-function cms_theme_link()
-{
+// Conserve pour compatibilite : n'emet plus que la feuille du theme
+function cms_theme_link() {
     $dir = cms_theme_dir();
 
     if ($dir === '' || !is_file($dir . '/theme.css')) {
@@ -358,9 +465,8 @@ function cms_theme_link()
         . e(cms_asset_url('themes/' . cms_current_theme() . '/theme.css')) . '">';
 }
 
-/** Barre d'outils de redaction, posee au-dessus d'une zone de saisie */
-function cms_editor_toolbar($cible)
-{
+// Barre d'outils de redaction, posee au-dessus d'une zone de saisie
+function cms_editor_toolbar($cible) {
     $outils = [
         'Titre'      => "<h2>|</h2>",
         'Sous-titre' => "<h3>|</h3>",
@@ -383,9 +489,8 @@ function cms_editor_toolbar($cible)
     return $html . '</div>';
 }
 
-/** Nonce de la requete, pour autoriser nommement les rares scripts en */
-function cms_nonce()
-{
+// Nonce de la requete, pour autoriser nommement les rares scripts en
+function cms_nonce() {
     static $nonce = null;
     if ($nonce === null) {
         $nonce = base64_encode(random_bytes(12));
@@ -396,9 +501,8 @@ function cms_nonce()
 
 // ---------------------------------------------------------------------
 
-/** Jeton de la session courante (cree au premier appel) */
-function csrf_token()
-{
+// Jeton de la session courante (cree au premier appel)
+function csrf_token() {
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
@@ -406,23 +510,20 @@ function csrf_token()
     return $_SESSION['csrf_token'];
 }
 
-/** Champ cache a placer dans chaque formulaire POST */
-function csrf_field()
-{
+// Champ cache a placer dans chaque formulaire POST
+function csrf_field() {
     return '<input type="hidden" name="csrf_token" value="' . e(csrf_token()) . '">';
 }
 
-/** Compare un jeton recu au jeton de session, sans fuite de timing */
-function csrf_valid($token)
-{
+// Compare un jeton recu au jeton de session, sans fuite de timing
+function csrf_valid($token) {
     return is_string($token)
         && !empty($_SESSION['csrf_token'])
         && hash_equals($_SESSION['csrf_token'], $token);
 }
 
-/** Refuse la requete si le jeton est absent ou invalide */
-function csrf_check()
-{
+// Refuse la requete si le jeton est absent ou invalide
+function csrf_check() {
     if (!csrf_valid(isset($_POST['csrf_token']) ? $_POST['csrf_token'] : null)) {
         http_response_code(403);
         exit('Requete refusee : jeton de securite invalide ou expire. Rechargez la page et reessayez.');
@@ -431,128 +532,20 @@ function csrf_check()
 
 // ---------------------------------------------------------------------
 
-function cms_users()
-{
+function cms_users() {
     return cms_read_json(CMS_USERS_FILE);
 }
 
-/** Vrai tant qu'aucun compte n'existe : le site est fraichement installe */
-function cms_needs_setup()
-{
+// Vrai tant qu'aucun compte n'existe : le site est fraichement installe
+function cms_needs_setup() {
     return count(cms_users()) === 0;
 }
 
-// ---------------------------------------------------------------------
-// Flux simplifie inspire d'OAuth2 (https://connect.rayor.fr/llms.txt) :
-// redirection vers authorize.php, retour avec un code a usage unique,
-
-define('CMS_RAYOR_AUTHORIZE', 'https://connect.rayor.fr/authorize.php');
-define('CMS_RAYOR_API',       'https://connect.rayor.fr/api.php');
-
-function cms_rayor_config()
-{
-    $conf = cms_config_get('rayor_connect', []);
-
-    return is_array($conf) ? $conf : [];
-}
-
-/** Actif par defaut : aucune inscription prealable n'etant necessaire */
-function cms_rayor_enabled()
-{
-    $conf = cms_rayor_config();
-
-    return !isset($conf['enabled']) || $conf['enabled'] !== false;
-}
-
-/** Le client_id est le domaine, deduit de la requete : zero configuration. */
-function cms_rayor_client_id()
-{
-    $conf = cms_rayor_config();
-    if (!empty($conf['client_id'])) {
-        return $conf['client_id'];
-    }
-
-    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
-
-    // On retire un eventuel port : le client_id est un domaine
-    return preg_replace('/:\d+$/', '', $host);
-}
-
-function cms_rayor_scopes()
-{
-    $conf = cms_rayor_config();
-
-    // Minimisation des donnees : on ne demande que ce dont le CMS se
-    // sert reellement pour creer et reconnaitre un compte.
-    return !empty($conf['scopes']) ? $conf['scopes'] : 'openid profile email';
-}
-
-/** URL de retour. Doit etre sur le domaine du client_id, c'est verifie */
-function cms_rayor_redirect_uri()
-{
-    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
-
-    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-
-    return ($https ? 'https' : 'http') . '://' . $host . cms_base_uri() . 'auth/callback.php';
-}
-
-/** GET JSON serveur a serveur, avec verification stricte du certificat */
-function cms_http_get_json($url, $timeout = 10)
-{
-    $raw = false;
-
-    if (function_exists('curl_init')) {
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CONNECTTIMEOUT => $timeout,
-            CURLOPT_TIMEOUT        => $timeout,
-            CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_SSL_VERIFYHOST => 2,
-            CURLOPT_USERAGENT      => 'CMS/1.0 (+rayor-connect)',
-        ]);
-        $raw = curl_exec($ch);
-        curl_close($ch);
-    } elseif (ini_get('allow_url_fopen')) {
-        $context = stream_context_create([
-            'http' => ['timeout' => $timeout, 'ignore_errors' => true],
-            'ssl'  => ['verify_peer' => true, 'verify_peer_name' => true],
-        ]);
-        $raw = @file_get_contents($url, false, $context);
-    }
-
-    if (!is_string($raw) || $raw === '') {
-        return null;
-    }
-
-    $data = json_decode($raw, true);
-
-    return is_array($data) ? $data : null;
-}
-
-/** Cherche par rayor_id : seul identifiant stable, jamais l'e-mail. */
-function cms_find_user_by_rayor_id($rayorId)
-{
-    foreach (cms_users() as $user) {
-        if (isset($user['rayor_id']) && hash_equals((string) $user['rayor_id'], (string) $rayorId)) {
-            return $user;
-        }
-    }
-
-    return null;
-}
-
-function cms_is_admin()
-{
+function cms_is_admin() {
     return isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true;
 }
 
-/** Enregistrement complet de l'utilisateur connecte, ou null */
-function cms_current_user()
-{
+function cms_current_user() {
     if (empty($_SESSION['username'])) {
         return null;
     }
@@ -566,18 +559,16 @@ function cms_current_user()
     return null;
 }
 
-/** Bloque l'acces si l'utilisateur n'est pas connecte en admin */
-function cms_require_admin($loginUrl = 'login.php')
-{
+// Bloque l'acces si l'utilisateur n'est pas connecte en admin
+function cms_require_admin($loginUrl = 'login.php') {
     if (!cms_is_admin()) {
         header('Location: ' . $loginUrl);
         exit;
     }
 }
 
-/** Ouvre une session admin. session_regenerate_id empeche la fixation */
-function cms_login_user($username)
-{
+// Ouvre une session admin. session_regenerate_id empeche la fixation
+function cms_login_user($username) {
     session_regenerate_id(true);
     $_SESSION['is_admin'] = true;
     $_SESSION['username'] = $username;
@@ -586,15 +577,13 @@ function cms_login_user($username)
 
 // ---------------------------------------------------------------------
 
-/** REMOTE_ADDR et pas X-Forwarded-For, falsifiable par le client. */
-function cms_client_key()
-{
+// REMOTE_ADDR et pas X-Forwarded-For, falsifiable par le client
+function cms_client_key() {
     return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'inconnu';
 }
 
-/** Secondes de blocage restantes, 0 si la connexion est autorisee */
-function cms_login_lock_remaining()
-{
+// Secondes de blocage restantes, 0 si la connexion est autorisee
+function cms_login_lock_remaining() {
     $attempts = cms_read_json(CMS_ATTEMPTS_FILE);
     $key      = cms_client_key();
 
@@ -606,9 +595,8 @@ function cms_login_lock_remaining()
     return $remaining > 0 ? $remaining : 0;
 }
 
-/** Enregistre un echec et declenche le blocage au seuil atteint */
-function cms_login_record_failure()
-{
+// Enregistre un echec et declenche le blocage au seuil atteint
+function cms_login_record_failure() {
     $attempts = cms_read_json(CMS_ATTEMPTS_FILE);
     $key      = cms_client_key();
     $now      = time();
@@ -634,9 +622,8 @@ function cms_login_record_failure()
     cms_write_json(CMS_ATTEMPTS_FILE, $attempts);
 }
 
-/** Remet le compteur a zero apres une connexion reussie */
-function cms_login_reset()
-{
+// Remet le compteur a zero apres une connexion reussie
+function cms_login_reset() {
     $attempts = cms_read_json(CMS_ATTEMPTS_FILE);
     unset($attempts[cms_client_key()]);
     cms_write_json(CMS_ATTEMPTS_FILE, $attempts);
@@ -644,9 +631,8 @@ function cms_login_reset()
 
 // ---------------------------------------------------------------------
 
-/** Page « introuvable » du CMS */
-function cms_render_404($slug = '')
-{
+// Page « introuvable » du CMS
+function cms_render_404($slug = '') {
     http_response_code(404);
 
     // Un plugin peut vouloir journaliser, ou rediriger avant tout rendu
@@ -755,7 +741,7 @@ if (glob(CMS_PAGES_DIR . '/*.php')) {
 
 // ---------------------------------------------------------------------
 
-/** Tant qu'aucun compte n'existe, le site entier renvoie vers la creation */
+// Tant qu'aucun compte n'existe, le site entier renvoie vers la creation
 if (!defined('CMS_SKIP_SETUP') && cms_needs_setup()) {
     $cms_script = basename(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '');
 

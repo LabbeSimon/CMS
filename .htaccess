@@ -77,6 +77,9 @@ RewriteRule ^includes/ - [F,L]
 # Ce repertoire a aussi son propre .htaccess.
 RewriteRule ^data/ - [F,L]
 
+# media/ : uniquement des images, jamais de code executable.
+RewriteRule ^media/.+\.(php|phtml|phar)$ - [F,L]
+
 # themes/ : les .php sont des gabarits, inclus par le CMS et jamais
 # appeles directement. Les .css et les images du theme restent servis.
 RewriteRule ^themes/.+\.php$ - [F,L]

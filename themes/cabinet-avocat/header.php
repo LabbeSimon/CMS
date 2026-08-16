@@ -1,5 +1,5 @@
 <?php
-/** Theme Cabinet : masthead centre, navigation sous filet. */
+// Theme Cabinet : masthead centre, navigation sous filet
 require_once dirname(dirname(__DIR__)) . '/includes/bootstrap.php';
 ?>
 <!DOCTYPE html>

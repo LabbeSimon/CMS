@@ -11,9 +11,8 @@ define('CMSH_VERSION',    1);
 define('CMSH_EXT',        '.cmsh');
 define('CMSH_SEPARATEUR', '--');
 
-/** Metadonnees par defaut ; toute cle absente d'un fichier reprend ces valeurs. */
-function cmsh_defaults()
-{
+// Metadonnees par defaut ; toute cle absente d'un fichier reprend ces valeurs
+function cmsh_defaults() {
     return [
         'cmsh'        => CMSH_VERSION,
         'title'       => '',
@@ -71,9 +70,8 @@ function cmsh_defaults()
     ];
 }
 
-/** Fusion par-dessus les valeurs par defaut : le format peut evoluer sans casse. */
-function cmsh_merge(array $defaut, array $lu)
-{
+// Fusion par-dessus les valeurs par defaut : le format peut evoluer sans casse
+function cmsh_merge(array $defaut, array $lu) {
     foreach ($lu as $cle => $valeur) {
         if (isset($defaut[$cle]) && is_array($defaut[$cle]) && is_array($valeur)
             && array_keys($defaut[$cle]) !== range(0, count($defaut[$cle]) - 1)) {
@@ -86,15 +84,13 @@ function cmsh_merge(array $defaut, array $lu)
     return $defaut;
 }
 
-/** Empreinte du corps : detecte une modification faite hors du CMS. */
-function cmsh_checksum($body)
-{
+// Empreinte du corps : detecte une modification faite hors du CMS
+function cmsh_checksum($body) {
     return 'sha256:' . hash('sha256', (string) $body);
 }
 
-/** Decoupe un fichier .cmsh, ou null s'il n'est pas au format. */
-function cmsh_parse($raw)
-{
+// Decoupe un fichier .cmsh, ou null s'il n'est pas au format
+function cmsh_parse($raw) {
     $raw = (string) $raw;
 
     // 1. Ligne magique
@@ -139,9 +135,8 @@ function cmsh_parse($raw)
     ];
 }
 
-/** Serialise une page au format .cmsh */
-function cmsh_build(array $meta, $body)
-{
+// Serialise une page au format .cmsh
+function cmsh_build(array $meta, $body) {
     $meta = cmsh_merge(cmsh_defaults(), $meta);
     $meta['cmsh']     = CMSH_VERSION;
     $meta['checksum'] = cmsh_checksum($body);
@@ -154,20 +149,17 @@ function cmsh_build(array $meta, $body)
     return 'CMSH/' . CMSH_VERSION . "\n" . $json . "\n" . CMSH_SEPARATEUR . "\n" . $body;
 }
 
-/** Chemin du fichier d'une page. Le slug est suppose deja valide */
-function cmsh_path($slug)
-{
+// Chemin du fichier d'une page. Le slug est suppose deja valide
+function cmsh_path($slug) {
     return CMS_PAGES_DIR . '/' . $slug . CMSH_EXT;
 }
 
-function cmsh_slug_ok($slug)
-{
+function cmsh_slug_ok($slug) {
     return (bool) preg_match('/^[A-Za-z0-9_-]{1,64}$/', (string) $slug);
 }
 
-/** Charge une page, ou null si slug invalide, fichier absent ou format illisible. */
-function cmsh_load($slug)
-{
+// Charge une page, ou null si slug invalide, fichier absent ou format illisible
+function cmsh_load($slug) {
     if (!cmsh_slug_ok($slug)) {
         return null;
     }
@@ -196,9 +188,8 @@ function cmsh_load($slug)
     return $page;
 }
 
-/** Enregistre une page et met a jour auteur, date, domaine et empreinte. */
-function cmsh_save($slug, array $meta, $body)
-{
+// Enregistre une page et met a jour auteur, date, domaine et empreinte
+function cmsh_save($slug, array $meta, $body) {
     if (!cmsh_slug_ok($slug)) {
         return 'Slug invalide.';
     }
@@ -231,9 +222,8 @@ function cmsh_save($slug, array $meta, $body)
     return '';
 }
 
-/** Releve les medias reellement references par le corps. */
-function cmsh_scan_media($body)
-{
+// Releve les medias reellement references par le corps
+function cmsh_scan_media($body) {
     $trouve = [];
 
     if (preg_match_all('/\b(?:src|href|poster|data-src)\s*=\s*["\']([^"\']+)["\']/i', (string) $body, $m)) {
@@ -254,9 +244,8 @@ function cmsh_scan_media($body)
     return array_values(array_keys($trouve));
 }
 
-/** Liste des pages, metadonnees comprises, triee par slug */
-function cmsh_list()
-{
+// Liste des pages, metadonnees comprises, triee par slug
+function cmsh_list() {
     $pages = [];
 
     foreach (scandir(CMS_PAGES_DIR) as $entree) {
@@ -275,9 +264,8 @@ function cmsh_list()
     return $pages;
 }
 
-/** Plugins requis par une page et absents de l'installation */
-function cmsh_missing_plugins(array $meta)
-{
+// Plugins requis par une page et absents de l'installation
+function cmsh_missing_plugins(array $meta) {
     $manquants = [];
 
     foreach ((array) $meta['requires']['plugins'] as $plugin) {
@@ -290,9 +278,8 @@ function cmsh_missing_plugins(array $meta)
     return $manquants;
 }
 
-/** Migration unique des anciennes pages .php vers .cmsh */
-function cmsh_migrate_legacy()
-{
+// Migration unique des anciennes pages .php vers .cmsh
+function cmsh_migrate_legacy() {
     $convertis = [];
 
     foreach (scandir(CMS_PAGES_DIR) as $entree) {

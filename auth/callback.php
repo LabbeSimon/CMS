@@ -1,12 +1,11 @@
 <?php
-/** Retour de Rayor Connect */
+// Retour de Rayor Connect
 
 define('CMS_SKIP_SETUP', true);
 require_once __DIR__ . '/../includes/bootstrap.php';
 
-/** Affiche une erreur lisible et s'arrete. On ne renvoie jamais le detail */
-function rayor_echec($message, $code = 400)
-{
+// Affiche une erreur lisible et s'arrete. On ne renvoie jamais le detail
+function rayor_echec($message, $code = 400) {
     unset($_SESSION['rayor']);
 
     http_response_code($code);
@@ -29,7 +28,8 @@ function rayor_echec($message, $code = 400)
     exit;
 }
 
-if (!cms_rayor_enabled()) {
+// Le plugin peut avoir ete retire : ces deux pages n'ont alors plus de raison d'etre.
+if (!function_exists('cms_rayor_enabled') || !cms_rayor_enabled()) {
     rayor_echec('Rayor Connect est desactive sur ce site.', 404);
 }
 
@@ -62,7 +62,7 @@ if ($code === '') {
     rayor_echec('Autorisation refusee ou code absent.');
 }
 
-$profil = cms_http_get_json(CMS_RAYOR_API . '?' . http_build_query(['code' => $code]));
+$profil = cms_rayor_get_json(RAYOR_API . '?' . http_build_query(['code' => $code]));
 
 if ($profil === null) {
     rayor_echec('Le fournisseur d\'identite n\'a pas repondu. Reessayez dans un instant.', 502);
